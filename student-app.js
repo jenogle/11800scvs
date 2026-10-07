@@ -12,14 +12,26 @@ async function loadExam(){
  $('examTitle').textContent=data.title;$('statusBox').className='msg info';$('statusBox').textContent='本次考試共 '+data.question_count+' 題。題型與範圍由老師設定。';
  if(data.prevent_leave){$('rules').classList.remove('hidden');$('rules').innerHTML='<b>本次考試已啟用防切換視窗。</b><br>考試開始後，若切換分頁、最小化瀏覽器或離開考試頁，將開始 '+data.leave_grace_seconds+' 秒倒數；若未在時間內回來，系統會直接交卷。';}
  else $('rules').classList.add('hidden');
+ if(data.gate_enabled){
+   $('gateBox').classList.remove('hidden');
+   if(data.gate_required){
+     $('gateBox').innerHTML='<b>目前為受密碼保護時段。</b><br>請輸入老師現場提供的考場密碼後才能開始作答。';
+     $('gatePasswordWrap').classList.remove('hidden');
+   }else{
+     $('gateBox').innerHTML='<b>本場有設定密碼時段，但目前不在限制時間內。</b><br>現在為公開考場，可直接開始作答。';
+     $('gatePasswordWrap').classList.add('hidden');
+   }
+ }else{
+   $('gateBox').classList.add('hidden');$('gatePasswordWrap').classList.add('hidden');
+ }
  $('loginBox').classList.remove('hidden');$('headInfo').textContent=data.title;
 }
 async function startExam(){
  const sid=$('sid').value.trim(),name=$('sname').value.trim();if(!sid||!name)return alert('請輸入學號與姓名');
  $('startBtn').disabled=true;$('startBtn').textContent='正在建立考卷…';
- const {data,error}=await db.rpc('software_exam_begin_attempt',{p_exam_id:activeExam.id,p_student_id:sid,p_student_name:name});
+ const gatePassword=$('gatePassword')?.value.trim()||''; const {data,error}=await db.rpc('software_exam_begin_attempt_v2',{p_exam_id:activeExam.id,p_student_id:sid,p_student_name:name,p_gate_password:gatePassword});
  $('startBtn').disabled=false;$('startBtn').textContent='我已了解規則，開始考試';
- if(error)return alert('無法開始考試：'+friendly(error));
+ if(error){let m=friendly(error);if(m.includes('考場密碼錯誤'))m='考場密碼錯誤，請向老師確認後再試。';return alert('無法開始考試：'+m)}
  student={sid,name};attemptId=data.attempt_id;qs=data.questions||[];ans={};idx=0;submitted=false;
  if(activeExam.prevent_leave){$('antiNotice').classList.remove('hidden');$('antiNotice').textContent='防切換已啟用：離開考試頁超過 '+activeExam.leave_grace_seconds+' 秒將自動交卷。'}
  else $('antiNotice').classList.add('hidden');
