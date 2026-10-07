@@ -59,6 +59,34 @@ function bindLeaveGuard(){
  window.addEventListener('blur',()=>{if(!document.hidden)startLeaveCountdown()});
  window.addEventListener('focus',()=>cancelLeaveCountdown());
 }
+function answerLetters(arr){return (arr||[]).map(n=>String.fromCharCode(64+Number(n))).join('、')||'未作答'}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function loadReview(){
+  $('reviewBox').textContent='正在載入檢討內容…';
+  const {data,error}=await db.rpc('software_exam_attempt_review_v2',{p_attempt_id:attemptId});
+  if(error){$('reviewBox').innerHTML='<div class="msg err">檢討內容讀取失敗：'+escapeHtml(friendly(error))+'</div>';return}
+  const list=data||[];
+  if(!list.length){$('reviewBox').innerHTML='<div class="msg warn">目前沒有可顯示的檢討內容。</div>';return}
+  $('reviewBox').innerHTML=list.map((r,i)=>{
+    const selected=Array.isArray(r.selected)?r.selected:[];
+    const correct=Array.isArray(r.correct)?r.correct:[];
+    const options=(r.options||[]).map((o,n)=>{
+      const no=n+1;
+      const mine=selected.includes(no);
+      const right=correct.includes(no);
+      let mark='';
+      if(right&&mine) mark=' ✓';
+      else if(right) mark=' ← 正確答案';
+      else if(mine) mark=' ← 你的答案';
+      return '<div class="option" style="'+(right?'border-color:#86efac;background:#f0fdf4;':mine?'border-color:#fecaca;background:#fef2f2;':'')+'"><span><b>'+String.fromCharCode(65+n)+'.</b> '+escapeHtml(o)+mark+'</span></div>';
+    }).join('');
+    return '<div class="card" style="box-shadow:none;margin-bottom:12px">'+
+      '<div class="question">'+(i+1)+'. '+escapeHtml(r.prompt)+' <span class="badge '+(r.kind==='multiple'?'multiple':'single')+'">'+(r.kind==='multiple'?'複選題':'單選題')+'</span></div>'+
+      '<div class="msg '+(r.is_correct?'ok':'err')+'"><b>'+(r.is_correct?'答對':'答錯')+'</b>｜你的答案：'+answerLetters(selected)+'｜正確答案：'+answerLetters(correct)+'</div>'+
+      '<div style="margin-top:10px">'+options+'</div>'+
+    '</div>';
+  }).join('');
+}
 async function submitExam(manual=true,reason=''){
  if(submitted)return;const unanswered=qs.filter(q=>(ans[q.id]||[]).length===0).length;
  if(manual&&unanswered&&!confirm('還有 '+unanswered+' 題未作答，確定要交卷嗎？'))return;
@@ -66,7 +94,7 @@ async function submitExam(manual=true,reason=''){
  const {data,error}=await db.rpc('software_exam_submit_attempt',{p_attempt_id:attemptId,p_answers:ans});
  if(error){submitted=false;$('submitBtn').disabled=false;$('submitBtn').textContent='交卷';alert('交卷失敗：'+friendly(error));return}
  $('score').textContent=data.score;$('full').textContent=data.total;$('resultMeta').textContent=(student?.sid||'')+'｜'+(student?.name||'');
- $('resultReason').className='msg '+(manual?'info':'warn');$('resultReason').textContent=reason||'成績已送回老師端。';only('result');
+ $('resultReason').className='msg '+(manual?'info':'warn');$('resultReason').textContent=reason||'成績已送回老師端。';only('result');await loadReview();
 }
 async function autoSubmit(reason){await submitExam(false,reason)}
 $('startBtn').onclick=startExam;$('prevBtn').onclick=()=>{if(idx>0){idx--;render()}};$('nextBtn').onclick=()=>{if(idx<qs.length-1){idx++;render()}};$('submitBtn').onclick=()=>submitExam(true);loadExam();
