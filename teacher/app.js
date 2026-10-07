@@ -16,7 +16,35 @@ function gatePolicy(){
   $('gatePreview').textContent=(s&&e)?'已啟用：'+s.replace('T',' ')+' 到 '+e.replace('T',' ')+' 之間需要考場密碼；結束後自動公開。':'已啟用，請設定開始與結束時間。';
 }
 $('gateEnabled').onchange=gatePolicy;$('gateStart').oninput=gatePolicy;$('gateEnd').oninput=gatePolicy;gatePolicy();
-async function active(){const{data,error}=await db.rpc('software_exam_get_active');if(error){$('active').className='msg err';$('active').textContent='讀取失敗：'+friendly(error);return}if(!data){$('active').className='msg info';$('active').textContent='目前沒有開放中的考試。';return}$('active').className='msg ok';$('active').innerHTML='<b>'+data.title+'</b><br>題數：'+data.question_count+' 題｜防切換：'+(data.prevent_leave?'啟用（'+data.leave_grace_seconds+' 秒）':'關閉')+'｜時段密碼：'+(data.gate_enabled?(data.gate_required?'目前需要密碼':'已設定，目前不需密碼'):'關閉')}
+async function active(){
+  const {data,error}=await db.rpc('software_exam_get_active');
+  if(error){$('active').className='msg err';$('active').textContent='讀取失敗：'+friendly(error);return}
+  if(!data){$('active').className='msg info';$('active').textContent='目前沒有開放中的考試。';return}
+
+  let html='<b>'+data.title+'</b><br>題數：'+data.question_count+' 題｜防切換：'+(data.prevent_leave?'啟用（'+data.leave_grace_seconds+' 秒）':'關閉')+'｜時段密碼：'+(data.gate_enabled?(data.gate_required?'目前需要密碼':'已設定，目前不需密碼'):'關閉');
+
+  if(code()){
+    const teacher=await db.rpc('software_exam_teacher_session_info_v2',{p_code:code()});
+    const info=teacher.data&&teacher.data[0];
+    if(info){
+      if(info.gate_enabled){
+        const start=info.gate_start_at?new Date(info.gate_start_at).toLocaleString('zh-TW'):'—';
+        const end=info.gate_end_at?new Date(info.gate_end_at).toLocaleString('zh-TW'):'—';
+        html+='<br><br><b>考場密碼：</b><span style="font-size:20px;color:#b42318;font-weight:900">'+(info.room_code||'未設定')+'</span>';
+        html+='<br><span class="sub">密碼時段：'+start+' ～ '+end+'</span>';
+      }else{
+        html+='<br><br><b>考場密碼：</b>本場未啟用時段密碼';
+      }
+    }else{
+      html+='<br><span style="color:#b42318">管理碼錯誤，無法顯示考場密碼。</span>';
+    }
+  }else{
+    html+='<br><span class="sub">輸入老師管理碼後可顯示本場考場密碼。</span>';
+  }
+
+  $('active').className='msg ok';
+  $('active').innerHTML=html;
+}
 async function publish(){if(!code())return alert('請先輸入老師管理碼');const subs=selected();if(!subs.length)return alert('請至少選擇一個考試範圍');$('publish').disabled=true;const gateOn=$('gateEnabled').checked;
  if(gateOn&&(!$('gateStart').value||!$('gateEnd').value||!$('gatePassword').value.trim())){ $('publish').disabled=false; return alert('請完整設定密碼時段與考場密碼'); }
  const localIso=v=>v?new Date(v).toISOString():null;
@@ -107,4 +135,10 @@ $('loadExams').onclick=loadExamSessions;
 $('loadSelected').onclick=loadSelectedExam;
 $('examSelect').onchange=()=>{ if($('examSelect').value) loadSelectedExam(); };
 $('recordSort').onchange=renderRecords;
+let codeTimer=null;
+$('code').addEventListener('input',()=>{
+  clearTimeout(codeTimer);
+  codeTimer=setTimeout(active,350);
+});
+$('code').addEventListener('change',active);
 active();
