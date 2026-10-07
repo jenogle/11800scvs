@@ -25,7 +25,19 @@
 <div class="card"><div class="toolbar" style="justify-content:space-between"><div class="toolbar"><button class="ghost" id="prevBtn">上一題</button><button class="secondary" id="nextBtn">下一題</button></div><button class="primary" id="submitBtn">交卷</button></div></div>
 </section>
 
-<section id="result" class="card hidden"><h2>作答完成</h2><div style="font-size:46px;font-weight:900;color:#1d4ed8"><span id="score">0</span> / <span id="full">0</span></div><p id="resultMeta"></p><div id="resultReason" class="msg info">成績已送回老師端。</div></section>
+<section id="result" class="hidden">
+  <div class="card">
+    <h2>作答完成</h2>
+    <div style="font-size:46px;font-weight:900;color:#1d4ed8"><span id="score">0</span> / <span id="full">0</span></div>
+    <p id="resultMeta"></p>
+    <div id="resultReason" class="msg info">成績已送回老師端。</div>
+  </div>
+  <div class="card">
+    <h2>本次作答檢討</h2>
+    <div class="sub" style="margin-top:6px">以下僅顯示你這一次考卷的題目、你的答案與正確答案。</div>
+    <div id="reviewBox" style="margin-top:16px">正在載入檢討內容…</div>
+  </div>
+</section>
 </main>
 
 <div id="leaveOverlay" class="overlay hidden"><div class="overlaybox"><h2>你已離開考試頁面</h2><p>請立即回到考試視窗，否則將自動交卷。</p><div id="countdown" class="countdown">5</div><p class="sub">回到此頁後倒數會自動取消。</p></div></div>
