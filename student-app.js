@@ -35,7 +35,7 @@ function render(){
 window.pick=(id,v,ch,kind)=>{if(kind==='single')ans[id]=ch?[v]:[];else{let s=new Set(ans[id]||[]);ch?s.add(v):s.delete(v);ans[id]=[...s].sort((a,b)=>a-b)}stats()};
 function stats(){const done=qs.filter(q=>(ans[q.id]||[]).length).length,total=qs.length;$('total').textContent=total;$('done').textContent=done;$('left').textContent=total-done;$('now').textContent=(idx+1)+' / '+total;$('bar').style.width=(total?done/total*100:0)+'%';qs.forEach((q,i)=>$('n'+i)?.classList.toggle('done',(ans[q.id]||[]).length>0))}
 window.go=i=>{idx=i;render()};
-function cancelLeaveCountdown(){if(leaveTimer){clearInterval(leaveTimer);leaveTimer=null}leaveDeadline=null;$('leaveOverlay').classList.add('hidden')}
+function cancelLeaveCountdown(){if(leaveTimer){clearInterval(leaveTimer);leaveTimer=null}leaveDeadline=null;$('leaveOverlay').classList.add('hidden')} function returnToExam(){if(!leaveDeadline)return;if(Date.now()>=leaveDeadline){const secs=Math.max(1,Number(activeExam?.leave_grace_seconds)||5);if(leaveTimer){clearInterval(leaveTimer);leaveTimer=null}$('leaveOverlay').classList.add('hidden');autoSubmit('因離開考試頁超過 '+secs+' 秒，系統已自動交卷。');return}cancelLeaveCountdown()}
 function startLeaveCountdown(){
  if(!activeExam?.prevent_leave||submitted||!attemptId||leaveTimer)return;
  const secs=Math.max(1,Number(activeExam.leave_grace_seconds)||5);leaveDeadline=Date.now()+secs*1000;$('countdown').textContent=secs;$('leaveOverlay').classList.remove('hidden');
