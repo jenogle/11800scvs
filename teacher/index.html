@@ -12,6 +12,16 @@
 <div class="field"><label>防切換視窗</label><div class="switchrow"><input id="prevent" type="checkbox"><span>啟用離開考試頁偵測</span></div><small>切換分頁、最小化或切到其他程式時開始倒數。</small></div>
 </div>
 <div class="grid2" style="margin-top:14px"><div class="field"><label>離開後自動交卷秒數</label><input id="grace" type="number" value="5" min="1" max="60"><small>預設 5 秒；時間內回來就取消倒數。</small></div><div id="policyPreview" class="msg info">目前未啟用防切換視窗。</div></div>
+<div class="group" style="margin-top:16px">
+  <h3>指定時段考場密碼</h3>
+  <div class="switchrow"><input id="gateEnabled" type="checkbox"><span>啟用指定時段密碼保護</span></div>
+  <div class="grid" style="margin-top:12px">
+    <div class="field"><label>開始時間</label><input id="gateStart" type="datetime-local"><small>例如今天 17:00</small></div>
+    <div class="field"><label>結束時間</label><input id="gateEnd" type="datetime-local"><small>例如今天 20:00</small></div>
+    <div class="field"><label>考場密碼</label><input id="gatePassword" type="text" placeholder="例如 SCVS11800"><small>只有指定時段內需要輸入。</small></div>
+  </div>
+  <div id="gatePreview" class="msg info">目前未啟用時段密碼；學生可直接進入考場。</div>
+</div>
 </section>
 <section class="card"><div class="stephead"><div class="step">3</div><h2>選擇考試範圍</h2></div><div class="grid2">
 <div class="group"><h3>11800 本職類</h3><div class="checks"><label><input type="checkbox" value="11800-01" checked> 電腦概論</label><label><input type="checkbox" value="11800-02" checked> 應用軟體使用</label><label><input type="checkbox" value="11800-03" checked> 系統軟體使用</label><label><input type="checkbox" value="11800-04" checked> 資訊安全</label></div></div>
