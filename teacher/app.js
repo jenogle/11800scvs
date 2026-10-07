@@ -22,5 +22,89 @@ async function publish(){if(!code())return alert('請先輸入老師管理碼');
  const localIso=v=>v?new Date(v).toISOString():null;
  const{data,error}=await db.rpc('software_exam_teacher_publish_v3',{p_code:code(),p_title:$('title').value,p_question_count:+$('count').value,p_type_mode:$('type').value,p_subjects:subs,p_draw_mode:$('draw').value,p_open:$('open').value==='true',p_prevent_leave:$('prevent').checked,p_leave_grace_seconds:+$('grace').value||5,p_gate_enabled:gateOn,p_gate_start_at:localIso($('gateStart').value),p_gate_end_at:localIso($('gateEnd').value),p_gate_password:$('gatePassword').value.trim()});$('publish').disabled=false;if(error){$('msg').className='msg err';$('msg').textContent='發布失敗：'+friendly(error);return}$('msg').className='msg ok';$('msg').textContent='發布成功，可用題數 '+data.available+' 題。';await active();await records()}
 async function closeExam(){if(!code())return alert('請先輸入老師管理碼');if(!confirm('確定要關閉目前考試嗎？'))return;const{data,error}=await db.rpc('software_exam_teacher_close_v2',{p_code:code()});if(error){$('msg').className='msg err';$('msg').textContent='關閉失敗：'+friendly(error);return}if(!data){$('msg').className='msg err';$('msg').textContent='關閉失敗：管理碼錯誤，或目前沒有開放中的考試。';return}$('msg').className='msg ok';$('msg').textContent='目前考試已關閉。';await active()}
-async function records(){if(!code())return alert('請先輸入老師管理碼');$('rows').innerHTML='<tr><td colspan="7">讀取中…</td></tr>';const{data,error}=await db.rpc('software_exam_teacher_records_v2',{p_code:code()});if(error){$('rows').innerHTML='<tr><td colspan="7">'+friendly(error)+'</td></tr>';return}const r=data||[];$('rows').innerHTML=r.length?r.map(x=>'<tr><td>'+new Date(x.started_at).toLocaleString('zh-TW')+'</td><td>'+(x.submitted_at?new Date(x.submitted_at).toLocaleString('zh-TW'):'—')+'</td><td>'+x.exam_title+'</td><td>'+x.student_id+'</td><td>'+x.student_name+'</td><td>'+(x.score==null?'—':'<b>'+x.score+' / '+x.total+'</b>')+'</td><td>'+(x.submitted_at?'已交卷':'作答中')+'</td></tr>').join(''):'<tr><td colspan="7">目前沒有作答紀錄。</td></tr>'}
-$('publish').onclick=publish;$('close').onclick=closeExam;$('refresh').onclick=records;active();
+let examSessions=[],currentRecords=[],currentBest=[];
+
+async function loadExamSessions(){
+  if(!code()) return alert('請先輸入老師管理碼');
+  $('examSelect').innerHTML='<option value="">讀取場次中…</option>';
+  const {data,error}=await db.rpc('software_exam_teacher_exam_list_v2',{p_code:code()});
+  if(error){
+    $('examSelect').innerHTML='<option value="">讀取失敗</option>';
+    $('examSummary').className='msg err';
+    $('examSummary').textContent='場次讀取失敗：'+friendly(error);
+    return;
+  }
+  examSessions=data||[];
+  $('examSelect').innerHTML=examSessions.length
+    ? '<option value="">請選擇場次</option>'+examSessions.map(e=>{
+        const d=new Date(e.created_at).toLocaleString('zh-TW');
+        const state=e.is_open?'開放中':'已結束';
+        return '<option value="'+e.exam_id+'">'+d+'｜'+e.title+'｜'+state+'</option>';
+      }).join('')
+    : '<option value="">目前沒有場次</option>';
+  $('examSummary').className='msg info';
+  $('examSummary').textContent=examSessions.length?'已讀取 '+examSessions.length+' 個場次，請選擇要查看的場次。':'目前沒有考試場次。';
+}
+
+function sortRecords(list){
+  const mode=$('recordSort')?.value||'student';
+  const r=[...list];
+  if(mode==='time') r.sort((a,b)=>new Date(b.started_at)-new Date(a.started_at));
+  else if(mode==='score') r.sort((a,b)=>(b.score??-1)-(a.score??-1)||String(a.student_id).localeCompare(String(b.student_id),'zh-Hant',{numeric:true}));
+  else r.sort((a,b)=>String(a.student_id).localeCompare(String(b.student_id),'zh-Hant',{numeric:true})||new Date(a.started_at)-new Date(b.started_at));
+  return r;
+}
+
+function renderRecords(){
+  const r=sortRecords(currentRecords);
+  $('rows').innerHTML=r.length?r.map(x=>
+    '<tr><td>'+x.student_id+'</td><td>'+x.student_name+'</td><td>'+(x.score==null?'—':'<b>'+x.score+' / '+x.total+'</b>')+'</td><td>'+(x.submitted_at?'已交卷':'作答中')+'</td><td>'+new Date(x.started_at).toLocaleString('zh-TW')+'</td><td>'+(x.submitted_at?new Date(x.submitted_at).toLocaleString('zh-TW'):'—')+'</td></tr>'
+  ).join(''):'<tr><td colspan="6">此場次目前沒有作答紀錄。</td></tr>';
+
+  $('bestRows').innerHTML=currentBest.length?currentBest.map(x=>
+    '<tr><td>'+x.student_id+'</td><td>'+x.student_name+'</td><td><b>'+x.best_score+' / '+x.total+'</b></td><td>'+x.attempt_count+'</td><td>'+new Date(x.first_attempt_at).toLocaleString('zh-TW')+'</td><td>'+new Date(x.last_attempt_at).toLocaleString('zh-TW')+'</td><td>'+new Date(x.best_submitted_at).toLocaleString('zh-TW')+'</td></tr>'
+  ).join(''):'<tr><td colspan="7">此場次目前沒有已交卷成績。</td></tr>';
+}
+
+async function loadSelectedExam(){
+  if(!code()) return alert('請先輸入老師管理碼');
+  const examId=$('examSelect')?.value;
+  if(!examId) return alert('請先選擇一個場次');
+  $('rows').innerHTML='<tr><td colspan="6">讀取中…</td></tr>';
+  $('bestRows').innerHTML='<tr><td colspan="7">讀取中…</td></tr>';
+  const [all,best]=await Promise.all([
+    db.rpc('software_exam_teacher_records_by_exam_v2',{p_code:code(),p_exam_id:examId}),
+    db.rpc('software_exam_teacher_best_by_exam_v2',{p_code:code(),p_exam_id:examId})
+  ]);
+  if(all.error||best.error){
+    const e=all.error||best.error;
+    $('rows').innerHTML='<tr><td colspan="6">'+friendly(e)+'</td></tr>';
+    $('bestRows').innerHTML='<tr><td colspan="7">'+friendly(e)+'</td></tr>';
+    return;
+  }
+  currentRecords=all.data||[];
+  currentBest=best.data||[];
+  const s=examSessions.find(x=>x.exam_id===examId);
+  $('examSummary').className='msg ok';
+  $('examSummary').innerHTML=s
+    ? '<b>'+s.title+'</b><br>題數：'+s.question_count+'｜作答紀錄：'+s.attempt_count+' 筆｜已交卷：'+s.submitted_count+' 筆｜狀態：'+(s.is_open?'開放中':'已結束')
+    : '已載入此場次紀錄。';
+  renderRecords();
+}
+
+async function records(){
+  await loadExamSessions();
+  if(examSessions.length===1){
+    $('examSelect').value=examSessions[0].exam_id;
+    await loadSelectedExam();
+  }
+}
+
+$('publish').onclick=publish;
+$('close').onclick=closeExam;
+$('refresh').onclick=records;
+$('loadExams').onclick=loadExamSessions;
+$('loadSelected').onclick=loadSelectedExam;
+$('examSelect').onchange=()=>{ if($('examSelect').value) loadSelectedExam(); };
+$('recordSort').onchange=renderRecords;
+active();
