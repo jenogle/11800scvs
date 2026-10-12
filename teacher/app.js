@@ -11,13 +11,9 @@ function subjectLabel(value){
 }
 
 function renderQuotaRows(){
-  const quotaMode=$('draw').value==='quota';
-  $('quotaPanel').classList.toggle('hidden',!quotaMode);
-  $('type').disabled=quotaMode;
-  $('count').readOnly=quotaMode;
+  $('quotaPanel').classList.remove('hidden');
+  $('count').readOnly=true;
   const subs=selected();
-
-  if(!quotaMode) return;
 
   const existing={};
   document.querySelectorAll('#quotaRows input[data-section]').forEach(inp=>{
@@ -49,7 +45,6 @@ function quotaObject(){
 }
 
 function updateQuotaTotal(){
-  if($('draw').value!=='quota') return;
   const quotas=quotaObject();
   let total=0,single=0,multiple=0;
   Object.values(quotas).forEach(q=>{single+=q.single||0;multiple+=q.multiple||0;});
@@ -63,7 +58,6 @@ window.pickAll=()=>{document.querySelectorAll('input[type=checkbox][value]').for
 window.pickNone=()=>{document.querySelectorAll('input[type=checkbox][value]').forEach(x=>x.checked=false);renderQuotaRows()};
 function policy(){const on=$('prevent').checked,sec=+$('grace').value||5;$('grace').disabled=!on;$('policyPreview').textContent=on?'已啟用：學生離開考試頁超過 '+sec+' 秒將自動交卷。':'目前未啟用防切換視窗。'}
 $('prevent').onchange=policy;$('grace').oninput=policy;policy();
-$('draw').addEventListener('change',renderQuotaRows);
 document.querySelectorAll('input[type=checkbox][value]').forEach(x=>x.addEventListener('change',renderQuotaRows));
 renderQuotaRows();
 function gatePolicy(){
@@ -103,10 +97,10 @@ async function active(){
   $('active').className='msg ok';
   $('active').innerHTML=html;
 }
-async function publish(){if(!code())return alert('請先輸入老師管理碼');const subs=selected();if(!subs.length)return alert('請至少選擇一個考試範圍');$('publish').disabled=true;const gateOn=$('gateEnabled').checked;const quotaMode=$('draw').value==='quota';const quotas=quotaMode?quotaObject():null;if(quotaMode&&(+($('count').value)||0)<1){$('publish').disabled=false;return alert('請至少設定 1 題');}
+async function publish(){if(!code())return alert('請先輸入老師管理碼');const subs=selected();if(!subs.length)return alert('請至少選擇一個考試範圍');$('publish').disabled=true;const gateOn=$('gateEnabled').checked;const quotas=quotaObject();if((+($('count').value)||0)<1){$('publish').disabled=false;return alert('請至少設定 1 題');}
  if(gateOn&&(!$('gateStart').value||!$('gateEnd').value||!$('gatePassword').value.trim())){ $('publish').disabled=false; return alert('請完整設定密碼時段與考場密碼'); }
  const localIso=v=>v?new Date(v).toISOString():null;
- const{data,error}=await db.rpc('software_exam_teacher_publish_v5',{p_code:code(),p_title:$('title').value,p_question_count:+$('count').value,p_type_mode:quotaMode?'mixed':$('type').value,p_subjects:subs,p_draw_mode:$('draw').value,p_open:$('open').value==='true',p_prevent_leave:$('prevent').checked,p_leave_grace_seconds:+$('grace').value||5,p_gate_enabled:gateOn,p_gate_start_at:localIso($('gateStart').value),p_gate_end_at:localIso($('gateEnd').value),p_gate_password:$('gatePassword').value.trim(),p_subject_quotas:quotas});$('publish').disabled=false;if(error){$('msg').className='msg err';$('msg').textContent='發布失敗：'+friendly(error);return}$('msg').className='msg ok';$('msg').textContent='發布成功，可用題數 '+data.available+' 題。';await active();await records()}
+ const{data,error}=await db.rpc('software_exam_teacher_publish_v5',{p_code:code(),p_title:$('title').value,p_question_count:+$('count').value,p_type_mode:'mixed',p_subjects:subs,p_draw_mode:'quota',p_open:$('open').value==='true',p_prevent_leave:$('prevent').checked,p_leave_grace_seconds:+$('grace').value||5,p_gate_enabled:gateOn,p_gate_start_at:localIso($('gateStart').value),p_gate_end_at:localIso($('gateEnd').value),p_gate_password:$('gatePassword').value.trim(),p_subject_quotas:quotas});$('publish').disabled=false;if(error){$('msg').className='msg err';$('msg').textContent='發布失敗：'+friendly(error);return}$('msg').className='msg ok';$('msg').textContent='發布成功，可用題數 '+data.available+' 題。';await active();await records()}
 async function closeExam(){if(!code())return alert('請先輸入老師管理碼');if(!confirm('確定要關閉目前考試嗎？'))return;const{data,error}=await db.rpc('software_exam_teacher_close_v2',{p_code:code()});if(error){$('msg').className='msg err';$('msg').textContent='關閉失敗：'+friendly(error);return}if(!data){$('msg').className='msg err';$('msg').textContent='關閉失敗：管理碼錯誤，或目前沒有開放中的考試。';return}$('msg').className='msg ok';$('msg').textContent='目前考試已關閉。';await active()}
 let examSessions=[],currentRecords=[],currentBest=[];
 
