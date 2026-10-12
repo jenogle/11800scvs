@@ -29,7 +29,7 @@ async function loadExam(){
 async function startExam(){
  const sid=$('sid').value.trim(),name=$('sname').value.trim();if(!sid||!name)return alert('請輸入學號與姓名');
  $('startBtn').disabled=true;$('startBtn').textContent='正在建立考卷…';
- const gatePassword=$('gatePassword')?.value.trim()||''; const {data,error}=await db.rpc('software_exam_begin_attempt_v2',{p_exam_id:activeExam.id,p_student_id:sid,p_student_name:name,p_gate_password:gatePassword});
+ const gatePassword=$('gatePassword')?.value.trim()||''; const {data,error}=await db.rpc('software_exam_begin_attempt_v4',{p_exam_id:activeExam.id,p_student_id:sid,p_student_name:name,p_gate_password:gatePassword});
  $('startBtn').disabled=false;$('startBtn').textContent='我已了解規則，開始考試';
  if(error){let m=friendly(error);if(m.includes('考場密碼錯誤'))m='考場密碼錯誤，請向老師確認後再試。';return alert('無法開始考試：'+m)}
  student={sid,name};attemptId=data.attempt_id;qs=data.questions||[];ans={};idx=0;submitted=false;
