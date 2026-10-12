@@ -5,9 +5,8 @@
 <section class="card"><div class="stephead"><div class="step">2</div><h2>設定本次考試</h2></div>
 <div class="grid">
 <div class="field"><label>考試名稱</label><input id="title" value="電腦軟體應用乙級學科測驗"></div>
-<div class="field"><label>本次題數</label><input id="count" type="number" value="80" min="1"></div>
-<div class="field"><label>題型</label><select id="type"><option value="mixed">單選＋複選混合</option><option value="single">只考單選</option><option value="multiple">只考複選</option></select></div>
-<div class="field"><label>抽題方式</label><select id="draw"><option value="random">全範圍隨機</option><option value="balanced">各範圍平均混抽</option><option value="quota">指定各題庫單選／複選題數</option></select></div>
+<div class="field"><label>本次題數</label><input id="count" type="number" value="0" min="1" readonly><small>由各題庫單選／複選設定自動加總。</small></div>
+<div class="field"><label>抽題方式</label><input value="各題庫指定題數後隨機抽選" readonly><small>每位學生都會依相同配額重新隨機抽題。</small></div>
 <div class="field"><label>發布狀態</label><select id="open"><option value="true">發布後立即開放</option><option value="false">只建立、不開放</option></select></div>
 <div class="field"><label>防切換視窗</label><div class="switchrow"><input id="prevent" type="checkbox"><span>啟用離開考試頁偵測</span></div><small>切換分頁、最小化或切到其他程式時開始倒數。</small></div>
 </div>
@@ -29,8 +28,8 @@
 <div class="group"><h3>其他共同科目</h3><div class="checks"><label><input type="checkbox" value="90006-01"> 職業安全衛生</label><label><input type="checkbox" value="90007-01"> 工作倫理與職業道德</label><label><input type="checkbox" value="90008-03"> 環境保護</label><label><input type="checkbox" value="90009-04"> 節能減碳</label></div></div>
 <div class="group"><h3>快速選擇</h3><div class="toolbar" style="margin-top:0"><button class="secondary" onclick="pickMain()">只選 11800</button><button class="secondary" onclick="pickAll()">全選</button><button class="secondary" onclick="pickNone()">全部取消</button></div></div>
 </div>
-<div id="quotaPanel" class="group hidden" style="margin-top:16px">
-  <h3>指定各題庫單選／複選題數</h3>
+<div id="quotaPanel" class="group" style="margin-top:16px">
+  <h3>各題庫抽題設定</h3>
   <div class="sub" style="margin-bottom:12px">每個題庫可分別指定單選與複選要抽幾題；0 代表不抽。總題數會自動加總。</div>
   <div style="overflow:auto">
     <table>
