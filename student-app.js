@@ -29,7 +29,7 @@ async function loadExam(){
 async function startExam(){
  const sid=$('sid').value.trim(),name=$('sname').value.trim();if(!sid||!name)return alert('請輸入學號與姓名');
  $('startBtn').disabled=true;$('startBtn').textContent='正在建立考卷…';
- const gatePassword=$('gatePassword')?.value.trim()||''; const {data,error}=await db.rpc('software_exam_begin_attempt_v4',{p_exam_id:activeExam.id,p_student_id:sid,p_student_name:name,p_gate_password:gatePassword});
+ const gatePassword=$('gatePassword')?.value.trim()||''; const {data,error}=await db.rpc('software_exam_begin_attempt_v7',{p_exam_id:activeExam.id,p_student_id:sid,p_student_name:name,p_gate_password:gatePassword});
  $('startBtn').disabled=false;$('startBtn').textContent='我已了解規則，開始考試';
  if(error){let m=friendly(error);if(m.includes('考場密碼錯誤'))m='考場密碼錯誤，請向老師確認後再試。';return alert('無法開始考試：'+m)}
  student={sid,name};attemptId=data.attempt_id;qs=data.questions||[];ans={};idx=0;submitted=false;
@@ -91,7 +91,7 @@ async function submitExam(manual=true,reason=''){
  if(submitted)return;const unanswered=qs.filter(q=>(ans[q.id]||[]).length===0).length;
  if(manual&&unanswered&&!confirm('還有 '+unanswered+' 題未作答，確定要交卷嗎？'))return;
  submitted=true;cancelLeaveCountdown();$('submitBtn').disabled=true;$('submitBtn').textContent='交卷中…';
- const {data,error}=await db.rpc('software_exam_submit_attempt',{p_attempt_id:attemptId,p_answers:ans});
+ const {data,error}=await db.rpc('software_exam_submit_attempt_v2',{p_attempt_id:attemptId,p_answers:ans});
  if(error){submitted=false;$('submitBtn').disabled=false;$('submitBtn').textContent='交卷';alert('交卷失敗：'+friendly(error));return}
  $('score').textContent=data.score;$('full').textContent=data.total;$('resultMeta').textContent=(student?.sid||'')+'｜'+(student?.name||'');
  $('resultReason').className='msg '+(manual?'info':'warn');$('resultReason').textContent=reason||'成績已送回老師端。';only('result');await loadReview();
