@@ -1,12 +1,12 @@
 <!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>電腦軟體應用乙級｜老師後台</title><link rel="stylesheet" href="/assets/app.css"></head><body>
 <header><div class="wrap"><h1>電腦軟體應用乙級｜老師出題後台</h1><div class="sub">依序完成：輸入管理碼 → 設定考試 → 選範圍 → 發布 → 查看成績</div></div></header>
 <main class="main">
-<section class="card"><div class="stephead"><div class="step">1</div><h2>老師驗證</h2></div><div class="grid2"><div class="field"><label>老師管理碼</label><input id="code" type="password" placeholder="請輸入老師管理碼"><small>目前管理碼為你原本使用的 1234。</small></div><div class="msg info">管理碼只用於發布、關閉考試與查看成績，學生端不會看到。</div></div></section>
+<section class="card"><div class="stephead"><div class="step">1</div><h2>老師驗證</h2></div><div class="grid2"><div class="field"><label>老師管理碼</label><input id="code" type="password" placeholder="請輸入老師管理碼"><small>管理碼僅供授權老師使用。</small></div><div class="msg info" id="authStatus">請輸入管理碼以驗證老師身分。</div><div class="toolbar"><button id="verify" class="primary">驗證登入</button><button id="logout" class="ghost">登出</button></div></div></section>
 <section class="card"><div class="stephead"><div class="step">2</div><h2>設定本次考試</h2></div>
 <div class="grid">
 <div class="field"><label>考試名稱</label><input id="title" value="電腦軟體應用乙級學科測驗"></div>
 <div class="field"><label>本次題數</label><input id="count" type="number" value="0" min="1" readonly><small>由各題庫單選／複選設定自動加總。</small></div>
-<div class="field"><label>抽題方式</label><input value="各題庫指定題數後隨機抽選" readonly><small>每位學生都會依相同配額重新隨機抽題。</small></div>
+
 <div class="field"><label>發布狀態</label><select id="open"><option value="true">發布後立即開放</option><option value="false">只建立、不開放</option></select></div>
 <div class="field"><label>防切換視窗</label><div class="switchrow"><input id="prevent" type="checkbox"><span>啟用離開考試頁偵測</span></div><small>切換分頁、最小化或切到其他程式時開始倒數。</small></div>
 </div>
@@ -22,24 +22,18 @@
   <div id="gatePreview" class="msg info">目前未啟用時段密碼；學生可直接進入考場。</div>
 </div>
 </section>
-<section class="card"><div class="stephead"><div class="step">3</div><h2>選擇考試範圍</h2></div><div class="grid2">
-<div class="group"><h3>11800 本職類</h3><div class="checks"><label><input type="checkbox" value="11800-01" checked> 電腦概論</label><label><input type="checkbox" value="11800-02" checked> 應用軟體使用</label><label><input type="checkbox" value="11800-03" checked> 系統軟體使用</label><label><input type="checkbox" value="11800-04" checked> 資訊安全</label></div></div>
-<div class="group"><h3>90011 資訊相關共同科目</h3><div class="checks"><label><input type="checkbox" value="90011-01"> 電腦硬體架構</label><label><input type="checkbox" value="90011-02"> 網路概論與應用</label><label><input type="checkbox" value="90011-03"> 作業系統</label><label><input type="checkbox" value="90011-04"> 資訊運算思維</label><label><input type="checkbox" value="90011-05"> 資訊安全</label></div></div>
-<div class="group"><h3>其他共同科目</h3><div class="checks"><label><input type="checkbox" value="90006-01"> 職業安全衛生</label><label><input type="checkbox" value="90007-01"> 工作倫理與職業道德</label><label><input type="checkbox" value="90008-03"> 環境保護</label><label><input type="checkbox" value="90009-04"> 節能減碳</label></div></div>
-<div class="group"><h3>快速選擇</h3><div class="toolbar" style="margin-top:0"><button class="secondary" onclick="pickMain()">只選 11800</button><button class="secondary" onclick="pickAll()">全選</button><button class="secondary" onclick="pickNone()">全部取消</button></div></div>
-</div>
-<div id="quotaPanel" class="group" style="margin-top:16px">
-  <h3>各題庫抽題設定</h3>
-  <div class="sub" style="margin-bottom:12px">每個題庫可分別指定單選與複選要抽幾題；0 代表不抽。總題數會自動加總。</div>
-  <div style="overflow:auto">
-    <table>
-      <thead><tr><th>題庫</th><th>單選題數</th><th>複選題數</th></tr></thead>
-      <tbody id="quotaRows"></tbody>
-    </table>
-  </div>
-  <div id="quotaSummary" class="msg info">目前合計 0 題。</div>
-</div>
+<section class="card"><div class="stephead"><div class="step">3</div><h2>題庫與抽題配置</h2></div>
+<div class="sub">每個題庫可獨立選擇「全部範圍隨機抽」、「部分範圍隨機抽」，或「精準設定各單選／複選數量」。所有抽題皆為每位學生重新隨機。</div>
+<div id="groupConfig"></div>
+<div class="toolbar"><button class="ghost" id="resetPlan">全部清零</button></div>
+<div id="quotaSummary" class="msg info">本次共 0 題。</div>
 </section>
+<section class="card"><div class="stephead"><div class="step">4</div><h2>題型配分</h2></div>
+<p class="sub">配分按題型設定。原有場次不變。</p>
+<table><thead><tr><th>題型</th><th>題數</th><th>每題分數</th><th>小計</th></tr></thead><tbody>
+<tr><td>單選</td><td id="singleCount">0</td><td><input id="scoreSingle" type="number" min="0" step="0.5" value="1" style="max-width:110px"></td><td id="singleSub">0</td></tr>
+<tr><td>複選</td><td id="multipleCount">0</td><td><input id="scoreMultiple" type="number" min="0" step="0.5" value="1" style="max-width:110px"></td><td id="multipleSub">0</td></tr>
+</tbody></table><div id="scoreSummary" class="msg info">預估總分 0</div></section>
 <section class="card"><div class="stephead"><div class="step">4</div><h2>發布與控制</h2></div><div class="toolbar"><button class="primary" id="publish">發布考試</button><button class="danger" id="close">立即關閉考試</button><button class="secondary" id="refresh">重新整理成績</button></div><div id="msg" class="msg info">尚未操作。</div></section>
 <section class="card"><div class="stephead"><div class="step">5</div><h2>目前開放中的考試</h2></div><div id="active" class="msg info">讀取中…</div></section>
 <section class="card">
