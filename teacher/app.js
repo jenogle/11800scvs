@@ -13,7 +13,7 @@ const GROUPS=[
 const plans=Object.fromEntries(GROUPS.map(g=>[g.id,{enabled:g.id==='11800',mode:'all',selected:g.sections.map(s=>s[0]),kind:'mixed',count:g.id==='11800'?40:0,quotas:Object.fromEntries(g.sections.map(s=>[s[0],{single:0,multiple:0}]))}]));
 function esc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch]));}
 function selected(){return [...new Set(GROUPS.filter(g=>plans[g.id].enabled).flatMap(g=>plans[g.id].selected))]}
-function planList(){return GROUPS.filter(g=>plans[g.id].enabled).map(g=>{const p=plans[g.id];return {group:g.id,mode:p.mode,sections:p.mode==='all'?g.sections.map(s=>s[0]):p.selected,kind:p.kind,count:+p.count||0,quotas:p.quotas}}).filter(p=>p.mode==='quota'?Object.values(p.quotas).some(q=>q.single||q.multiple):p.count>0)}
+function planList(){return GROUPS.filter(g=>plans[g.id].enabled).map(g=>{const p=plans[g.id];return {group:g.id,mode:p.mode,sections:p.mode==='all'?g.sections.map(s=>s[0]):p.selected,kind:p.kind,count:+p.count||0,quotas:Object.fromEntries(Object.entries(p.quotas).filter(([s])=>(p.mode==='all'||p.selected.includes(s))))}}).filter(p=>p.mode==='quota'?Object.values(p.quotas).some(q=>q.single||q.multiple):p.count>0)}
 function recalc(){
  let n=0,single=0,multiple=0;
  for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;
@@ -90,7 +90,7 @@ async function publish(){
  for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;const ss=p.mode==='all'?g.sections:g.sections.filter(s=>p.selected.includes(s[0]));
  if(!ss.length)return alert(g.name+' 尚未選擇題庫');
  if(p.mode==='quota')for(const s of ss){const q=p.quotas[s[0]];if(!Number.isInteger(q.single)||!Number.isInteger(q.multiple)||q.single<0||q.multiple<0||q.single>s[2]||q.multiple>s[3])return alert(s[1]+' 出題數超過題庫可抽數或不是有效整數')}
- else if(p.count>ss.reduce((n,s)=>n+(p.kind==='multiple'?s[3]:p.kind==='single'?s[2]:s[2]+s[3]),0))return alert(g.name+' 可抽題數不足');
+ if(p.mode!=='quota'&&p.count>ss.reduce((n,s)=>n+(p.kind==='multiple'?s[3]:p.kind==='single'?s[2]:s[2]+s[3]),0))return alert(g.name+' 可抽題數不足');
  }
  const gateOn=$('gateEnabled').checked;
  if(gateOn&&(!$('gateStart').value||!$('gateEnd').value||!$('gatePassword').value.trim()))return alert('請完整設定考場密碼時段');
@@ -190,6 +190,25 @@ $('loadExams').onclick=loadExamSessions;
 $('loadSelected').onclick=loadSelectedExam;
 $('examSelect').onchange=()=>{ if($('examSelect').value) loadSelectedExam(); };
 $('recordSort').onchange=renderRecords;
+
+// 驗證只保存在目前分頁的執行階段；不在瀏覽器永久儲存管理碼。
+$('verify').onclick=async()=>{
+ const value=code();
+ if(!value){$('authStatus').textContent='請輸入管理碼';return}
+ $('verify').disabled=true;
+ const {data,error}=await db.rpc('software_exam_teacher_session_info_v2',{p_code:value});
+ $('verify').disabled=false;
+ if(error){$('authStatus').className='msg err';$('authStatus').textContent='驗證失敗：'+friendly(error);return}
+ if(!Array.isArray(data)||!data.length){
+  // 若目前尚未有開放場次，採用場次清單作為管理碼驗證來源
+  const chk=await db.rpc('software_exam_teacher_exam_list_v2',{p_code:value});
+  if(chk.error){$('authStatus').className='msg err';$('authStatus').textContent='管理碼驗證失敗';return}
+ }
+ $('authStatus').className='msg ok';$('authStatus').textContent='已完成老師驗證，可操作後台。';
+ active();
+};
+$('logout').onclick=()=>{$('code').value='';$('authStatus').className='msg info';$('authStatus').textContent='已登出，請重新驗證老師管理碼。';active();};
+
 let codeTimer=null;
 $('code').addEventListener('input',()=>{
   clearTimeout(codeTimer);
