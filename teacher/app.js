@@ -248,7 +248,7 @@ $('verify').onclick=async()=>{
  $('verify').disabled=false;
  if(error||data!==true){$('authStatus').className='msg err';$('authStatus').textContent='驗證失敗：請確認老師管理碼';return}
  $('authStatus').className='msg ok';$('authStatus').textContent='驗證成功，可發布考試及查看紀錄。';
- await active();
+ await Promise.all([active(),loadExamSessions()]);
 };
 $('logout').onclick=()=>{$('code').value='';$('authStatus').className='msg info';$('authStatus').textContent='已登出，請重新驗證老師管理碼。';active();};
 
