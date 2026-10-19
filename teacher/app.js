@@ -102,13 +102,60 @@ async function publish(){
  $('publish').disabled=false;
  $('msg').className='msg '+(error?'err':'ok');
  $('msg').textContent=error?'發布失敗：'+friendly(error):'發布成功，已建立 '+data.available+' 題的考試。';
- if(!error){await active();await records()}
+ if(!error){await active();await loadExamSessions()}
 }
-async function closeExam(){if(!code())return alert('請先輸入老師管理碼');if(!confirm('確定要關閉目前考試嗎？'))return;const{data,error}=await db.rpc('software_exam_teacher_close_v2',{p_code:code()});if(error){$('msg').className='msg err';$('msg').textContent='關閉失敗：'+friendly(error);return}if(!data){$('msg').className='msg err';$('msg').textContent='關閉失敗：管理碼錯誤，或目前沒有開放中的考試。';return}$('msg').className='msg ok';$('msg').textContent='目前考試已關閉。';await active()}
+
+function notice(message,isError=false){
+ $('msg').className='msg '+(isError?'err':'ok');
+ $('msg').textContent=message;
+}
+function renderRoomCards(){
+ const box=$('roomList');
+ if(!box)return;
+ if(!examSessions.length){box.innerHTML='<div class="msg info">目前尚未建立考場。請先設定題庫並點擊「發布考試」。</div>';return;}
+ box.innerHTML=examSessions.map(e=>{
+  const status=e.is_open?'開放中':'未開放';
+  const date=e.created_at?new Date(e.created_at).toLocaleString('zh-TW'):'—';
+  return '<article class="room-card'+(e.is_open?' room-open':'')+'" data-room="'+esc(e.exam_id)+'">'+
+    '<div class="room-card-head"><div><h3>'+esc(e.title)+'</h3><div class="sub">建立於 '+esc(date)+' · '+esc(e.question_count)+' 題</div></div>'+
+    '<span class="room-status'+(e.is_open?' is-open':'')+'">'+status+'</span></div>'+
+    '<div class="room-metrics"><span>參與紀錄 <b>'+Number(e.attempt_count||0)+'</b></span><span>已交卷 <b>'+Number(e.submitted_count||0)+'</b></span></div>'+
+    '<div class="toolbar room-actions">'+
+    (e.is_open?'<button class="danger roomToggle" data-id="'+esc(e.exam_id)+'" data-open="false">立即關閉考試</button>':
+      '<button class="primary roomToggle" data-id="'+esc(e.exam_id)+'" data-open="true">發布考試／重新開放</button>')+
+    '<button class="secondary roomScores" data-id="'+esc(e.exam_id)+'">重新整理成績</button>'+
+    '</div></article>';
+ }).join('');
+ box.querySelectorAll('.roomToggle').forEach(b=>b.addEventListener('click',()=>setRoomOpen(b.dataset.id,b.dataset.open==='true')));
+ box.querySelectorAll('.roomScores').forEach(b=>b.addEventListener('click',()=>showRoomScores(b.dataset.id)));
+}
+async function setRoomOpen(id,opening){
+ if(!code())return alert('請先輸入老師管理碼');
+ const room=examSessions.find(e=>e.exam_id===id);
+ if(!room)return alert('找不到考場，請重新整理');
+ const current=examSessions.find(e=>e.is_open&&e.exam_id!==id);
+ const prompt=opening
+  ? ('要開放「'+room.title+'」嗎？'+(current?'\n目前開放中的「'+current.title+'」將自動關閉。':''))
+  : ('確定要關閉「'+room.title+'」嗎？學生將無法再進入這個考場。');
+ if(!confirm(prompt))return;
+ const {error}=await db.rpc('software_exam_teacher_set_exam_open_v2',{p_code:code(),p_exam_id:id,p_open:opening});
+ if(error){notice('操作失敗：'+friendly(error),true);return;}
+ notice('「'+room.title+'」已'+(opening?'開放':'關閉')+'。');
+ await loadExamSessions();
+ await active();
+}
+async function showRoomScores(id){
+ if(!code())return alert('請先輸入老師管理碼');
+ if(!examSessions.some(e=>e.exam_id===id))await loadExamSessions();
+ $('examSelect').value=id;
+ await loadSelectedExam();
+ $('examSummary').scrollIntoView({behavior:'smooth',block:'start'});
+}
 let examSessions=[],currentRecords=[],currentBest=[];
 
 async function loadExamSessions(){
   if(!code()) return alert('請先輸入老師管理碼');
+  const previousId=$('examSelect').value;
   $('examSelect').innerHTML='<option value="">讀取場次中…</option>';
   const {data,error}=await db.rpc('software_exam_teacher_exam_list_v2',{p_code:code()});
   if(error){
@@ -118,6 +165,7 @@ async function loadExamSessions(){
     return;
   }
   examSessions=data||[];
+  renderRoomCards();
   $('examSelect').innerHTML=examSessions.length
     ? '<option value="">請選擇場次</option>'+examSessions.map(e=>{
         const d=new Date(e.created_at).toLocaleString('zh-TW');
@@ -125,6 +173,7 @@ async function loadExamSessions(){
         return '<option value="'+e.exam_id+'">'+d+'｜'+e.title+'｜'+state+'</option>';
       }).join('')
     : '<option value="">目前沒有場次</option>';
+  if(previousId&&examSessions.some(e=>e.exam_id===previousId))$('examSelect').value=previousId;
   $('examSummary').className='msg info';
   $('examSummary').textContent=examSessions.length?'已讀取 '+examSessions.length+' 個場次，請選擇要查看的場次。':'目前沒有考試場次。';
 }
@@ -184,8 +233,7 @@ async function records(){
 }
 
 $('publish').onclick=publish;
-$('close').onclick=closeExam;
-$('refresh').onclick=records;
+$('refresh').onclick=async()=>{await loadExamSessions();if($('examSelect').value)await loadSelectedExam();await active()};
 $('loadExams').onclick=loadExamSessions;
 $('loadSelected').onclick=loadSelectedExam;
 $('examSelect').onchange=()=>{ if($('examSelect').value) loadSelectedExam(); };
