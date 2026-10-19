@@ -14,3 +14,31 @@ input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{background:#f8fafc}.hidden{display:none!important}
 .overlay{position:fixed;inset:0;background:rgba(15,23,42,.92);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}.overlaybox{max-width:520px;width:100%;background:#fff;border-radius:20px;padding:28px;text-align:center}.countdown{font-size:64px;font-weight:900;color:#dc2626;margin:10px 0}
 @media(max-width:800px){.grid,.grid2,.checks,.stats{grid-template-columns:1fr}.wrap,.main{padding-left:14px;padding-right:14px}}
+/* Teacher dashboard refresh */
+body:has(#groupConfig){--bg:#f3f6fb;--blue:#315de6;--blue2:#244cc9;--line:#e1e8f1;font-family:Inter,-apple-system,BlinkMacSystemFont,"Noto Sans TC","Segoe UI",sans-serif}
+body:has(#groupConfig) header{background:linear-gradient(115deg,#172c62,#315de6);color:#fff;border:0}
+body:has(#groupConfig) header .sub{color:#d9e5ff}
+body:has(#groupConfig) .main{max-width:1180px;margin-top:26px}
+body:has(#groupConfig) .card{border-radius:20px;padding:26px;border-color:#e3e9f2;box-shadow:0 9px 32px rgba(25,49,89,.045);margin-bottom:22px}
+body:has(#groupConfig) .step{background:#e9efff;color:#2952d4;width:36px;height:36px}
+body:has(#groupConfig) .stephead{margin-bottom:20px}
+body:has(#groupConfig) .group{background:#fff;border-radius:16px;padding:20px}
+body:has(#groupConfig) .plan-group{border:1px solid #dce5f1;transition:border-color .18s,box-shadow .18s}
+body:has(#groupConfig) .plan-group:has(.planEnabled:checked){border-color:#99b4f9;box-shadow:0 2px 16px rgba(49,93,230,.06)}
+body:has(#groupConfig) .plan-group>.switchrow{font-size:16px}
+body:has(#groupConfig) .plan-group .toolbar{margin:16px 0}
+body:has(#groupConfig) .plan-group .toolbar label{width:min(100%,330px);display:grid;gap:7px;font-size:13px;color:#54627a;font-weight:700}
+body:has(#groupConfig) .plan-group .toolbar select{color:#172033;font-weight:600}
+body:has(#groupConfig) input:focus,body:has(#groupConfig) select:focus{outline:3px solid rgba(49,93,230,.15);border-color:#6488ed}
+body:has(#groupConfig) input[readonly]{background:#f2f5fa;color:#42516a}
+body:has(#groupConfig) button{transition:filter .14s,transform .14s}
+body:has(#groupConfig) button:hover{filter:brightness(.96)}
+body:has(#groupConfig) button:active{transform:translateY(1px)}
+body:has(#groupConfig) .scroll-table{overflow:auto;margin-top:12px;border:1px solid #e0e7f1;border-radius:12px}
+body:has(#groupConfig) .scroll-table table{min-width:650px}
+body:has(#groupConfig) th{background:#f5f7fc;color:#4d5d79;font-weight:750}
+body:has(#groupConfig) td,body:has(#groupConfig) th{padding:12px 13px}
+body:has(#groupConfig) .planQuota{max-width:115px}
+body:has(#groupConfig) .msg{border-radius:12px}
+body:has(#groupConfig) #quotaSummary{font-size:16px;font-weight:700;margin-top:18px}
+@media(max-width:800px){body:has(#groupConfig) .card{padding:18px}body:has(#groupConfig) .group{padding:14px}body:has(#groupConfig) h1{font-size:21px}}
