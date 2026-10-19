@@ -59,3 +59,21 @@ body:has(#roomManager) .room-metrics b{font-size:17px;color:#1c315c;margin-left:
 body:has(#roomManager) .room-actions{margin-top:18px}
 body:has(#roomManager) .room-actions button{flex:1;min-width:145px}
 @media(max-width:820px){body:has(#roomManager) .room-list{grid-template-columns:1fr}body:has(#roomManager) .room-creator{align-items:stretch;flex-direction:column}body:has(#roomManager) .room-creator .toolbar button{flex:1}}
+
+/* Overall formal-exam / custom-draw chooser */
+body:has(#standardPlan) .exam-mode-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}
+body:has(#standardPlan) .exam-mode-switch label{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:19px;border-radius:15px;border:1px solid #dce4f1;background:#fff;cursor:pointer}
+body:has(#standardPlan) .exam-mode-switch label:has(input:checked){border-color:#5f89ea;background:#f0f5ff;box-shadow:0 0 0 1px #bdd0fc}
+body:has(#standardPlan) .exam-mode-switch input{width:auto;accent-color:#315de6}
+body:has(#standardPlan) .exam-mode-switch b{font-size:16px}
+body:has(#standardPlan) .exam-mode-switch small{flex-basis:100%;margin-left:24px;color:#667085;line-height:1.6}
+body:has(#standardPlan) #standardPlan{margin-top:16px}
+body:has(#standardPlan) #standardPlan>.grid2 input{font-size:22px;font-weight:800}
+body:has(#standardPlan) .standard-sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+body:has(#standardPlan) .standard-bank{border:1px solid #e0e7f3;border-radius:12px;background:#fff;padding:15px;min-width:0}
+body:has(#standardPlan) .standard-bank-title{font-weight:800;display:flex;align-items:center;gap:9px;margin-bottom:12px}
+body:has(#standardPlan) .standard-bank-title input{width:auto;accent-color:#315de6}
+body:has(#standardPlan) .standard-bank .checks{grid-template-columns:1fr}
+body:has(#standardPlan) .standard-bank .checks label{display:flex;align-items:center;gap:8px;font-weight:500}
+body:has(#standardPlan) .standard-bank .checks input{accent-color:#315de6}
+@media(max-width:800px){body:has(#standardPlan) .exam-mode-switch,body:has(#standardPlan) .standard-sections{grid-template-columns:1fr}}
