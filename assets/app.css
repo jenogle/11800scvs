@@ -42,3 +42,20 @@ body:has(#groupConfig) .planQuota{max-width:115px}
 body:has(#groupConfig) .msg{border-radius:12px}
 body:has(#groupConfig) #quotaSummary{font-size:16px;font-weight:700;margin-top:18px}
 @media(max-width:800px){body:has(#groupConfig) .card{padding:18px}body:has(#groupConfig) .group{padding:14px}body:has(#groupConfig) h1{font-size:21px}}
+
+/* Exam-room manager */
+body:has(#roomManager) .room-creator{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border:1px solid #dce5f1;background:#f7faff;border-radius:15px}
+body:has(#roomManager) .room-creator h3{font-size:17px;margin:0 0 6px}
+body:has(#roomManager) .room-creator .toolbar{margin:0}
+body:has(#roomManager) .room-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:16px}
+body:has(#roomManager) .room-card{padding:20px;background:#fff;border:1px solid #dce4f0;border-radius:16px;min-width:0}
+body:has(#roomManager) .room-card.room-open{background:#f8fbff;border-color:#7ea3f5;box-shadow:0 0 0 1px rgba(49,93,230,.06)}
+body:has(#roomManager) .room-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+body:has(#roomManager) .room-card h3{font-size:16px;line-height:1.5;margin:0 0 5px;overflow-wrap:anywhere}
+body:has(#roomManager) .room-status{flex-shrink:0;font-size:12px;font-weight:800;padding:5px 9px;border-radius:50px;background:#f1f4f9;color:#667085}
+body:has(#roomManager) .room-status.is-open{background:#e9f9ee;color:#147c42}
+body:has(#roomManager) .room-metrics{display:flex;gap:15px;margin-top:18px;color:#637084;font-size:13px}
+body:has(#roomManager) .room-metrics b{font-size:17px;color:#1c315c;margin-left:5px}
+body:has(#roomManager) .room-actions{margin-top:18px}
+body:has(#roomManager) .room-actions button{flex:1;min-width:145px}
+@media(max-width:820px){body:has(#roomManager) .room-list{grid-template-columns:1fr}body:has(#roomManager) .room-creator{align-items:stretch;flex-direction:column}body:has(#roomManager) .room-creator .toolbar button{flex:1}}
