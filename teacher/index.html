@@ -34,10 +34,16 @@
 <tr><td>單選</td><td id="singleCount">0</td><td><input id="scoreSingle" type="number" min="0" step="0.5" value="1" style="max-width:110px"></td><td id="singleSub">0</td></tr>
 <tr><td>複選</td><td id="multipleCount">0</td><td><input id="scoreMultiple" type="number" min="0" step="0.5" value="1" style="max-width:110px"></td><td id="multipleSub">0</td></tr>
 </tbody></table><div id="scoreSummary" class="msg info">預估總分 0</div></section>
-<section class="card"><div class="stephead"><div class="step">5</div><h2>發布與控制</h2></div><div class="toolbar"><button class="primary" id="publish">發布考試</button><button class="danger" id="close">立即關閉考試</button><button class="secondary" id="refresh">重新整理成績</button></div><div id="msg" class="msg info">尚未操作。</div></section>
-<section class="card"><div class="stephead"><div class="step">6</div><h2>目前開放中的考試</h2></div><div id="active" class="msg info">讀取中…</div></section>
+<section class="card" id="roomManager"><div class="stephead"><div class="step">5</div><h2>考場管理與控制</h2></div>
+<p class="sub">每個考場各自管理發布狀態與成績。每次只能有一場考試開放；開放其他考場前會先要求確認。</p>
+<div class="room-creator"><div><h3>建立新考場</h3><div class="sub">依照上方的考試名稱、抽題與配分設定建立新場次。</div></div><div class="toolbar"><button class="primary" id="publish">發布考試</button><button class="secondary" id="refresh">重新整理考場與成績</button></div></div>
+<div id="msg" class="msg info">尚未操作。</div>
+<h3 style="margin-top:24px">我的考場</h3>
+<div id="active" class="msg info">正在讀取開放中的考場…</div>
+<div id="roomList" class="room-list"><div class="sub">輸入老師管理碼後，可查看各場次與獨立控制按鈕。</div></div>
+</section>
 <section class="card">
-<div class="stephead"><div class="step">7</div><h2>考試紀錄</h2></div>
+<div class="stephead"><div class="step">6</div><h2>考試紀錄</h2></div>
 
 <div class="grid2">
   <div class="field">
