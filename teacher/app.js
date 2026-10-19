@@ -194,18 +194,13 @@ $('recordSort').onchange=renderRecords;
 // 驗證只保存在目前分頁的執行階段；不在瀏覽器永久儲存管理碼。
 $('verify').onclick=async()=>{
  const value=code();
- if(!value){$('authStatus').textContent='請輸入管理碼';return}
+ if(!value){$('authStatus').textContent='請輸入老師管理碼';return}
  $('verify').disabled=true;
- const {data,error}=await db.rpc('software_exam_teacher_session_info_v2',{p_code:value});
+ const {data,error}=await db.rpc('software_exam_teacher_verify_code_v2',{p_code:value});
  $('verify').disabled=false;
- if(error){$('authStatus').className='msg err';$('authStatus').textContent='驗證失敗：'+friendly(error);return}
- if(!Array.isArray(data)||!data.length){
-  // 若目前尚未有開放場次，採用場次清單作為管理碼驗證來源
-  const chk=await db.rpc('software_exam_teacher_exam_list_v2',{p_code:value});
-  if(chk.error){$('authStatus').className='msg err';$('authStatus').textContent='管理碼驗證失敗';return}
- }
- $('authStatus').className='msg ok';$('authStatus').textContent='已完成老師驗證，可操作後台。';
- active();
+ if(error||data!==true){$('authStatus').className='msg err';$('authStatus').textContent='驗證失敗：請確認老師管理碼';return}
+ $('authStatus').className='msg ok';$('authStatus').textContent='驗證成功，可發布考試及查看紀錄。';
+ await active();
 };
 $('logout').onclick=()=>{$('code').value='';$('authStatus').className='msg info';$('authStatus').textContent='已登出，請重新驗證老師管理碼。';active();};
 
