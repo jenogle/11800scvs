@@ -14,18 +14,74 @@ const plans=Object.fromEntries(GROUPS.map(g=>[g.id,{enabled:g.id==='11800',mode:
 function esc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch]));}
 function selected(){return [...new Set(GROUPS.filter(g=>plans[g.id].enabled).flatMap(g=>plans[g.id].selected))]}
 function planList(){return GROUPS.filter(g=>plans[g.id].enabled).map(g=>{const p=plans[g.id];return {group:g.id,mode:p.mode,sections:p.mode==='all'?g.sections.map(s=>s[0]):p.selected,kind:p.kind,count:+p.count||0,quotas:Object.fromEntries(Object.entries(p.quotas).filter(([s])=>(p.mode==='all'||p.selected.includes(s))))}}).filter(p=>p.mode==='quota'?Object.values(p.quotas).some(q=>q.single||q.multiple):p.count>0)}
+
+const standardSections=new Set(GROUPS.find(g=>g.id==='11800').sections.map(s=>s[0]));
+function isStandard(){return document.querySelector('input[name="examPlanMode"]:checked')?.value==='standard'}
+function drawParts(){
+ if(!isStandard())return planList();
+ const ss=[...standardSections],single=Number($('standardSingle').value),multiple=Number($('standardMultiple').value);
+ return [
+  {group:'standard-single',mode:'all',sections:ss,kind:'single',count:single,quotas:{}},
+  {group:'standard-multiple',mode:'all',sections:ss,kind:'multiple',count:multiple,quotas:{}}
+ ].filter(p=>p.count>0);
+}
+function standardLimits(){
+ let single=0,multiple=0;
+ for(const g of GROUPS)for(const s of g.sections)if(standardSections.has(s[0])){single+=s[2];multiple+=s[3]}
+ return {single,multiple};
+}
+function renderStandard(){
+ $('standardSections').innerHTML=GROUPS.map(g=>'<div class="standard-bank"><label class="standard-bank-title"><input type="checkbox" class="standardGroup" data-group="'+g.id+'" '+(g.sections.every(s=>standardSections.has(s[0]))?'checked':'')+'> '+esc(g.name)+'</label><div class="checks">'+g.sections.map(s=>'<label><input class="standardSection" type="checkbox" value="'+s[0]+'" '+(standardSections.has(s[0])?'checked':'')+'> '+esc(s[1])+'</label>').join('')+'</div></div>').join('');
+ document.querySelectorAll('.standardSection').forEach(el=>el.onchange=()=>{el.checked?standardSections.add(el.value):standardSections.delete(el.value);renderStandard();});
+ document.querySelectorAll('.standardGroup').forEach(el=>el.onchange=()=>{
+  const g=GROUPS.find(g=>g.id===el.dataset.group);
+  for(const s of g.sections)el.checked?standardSections.add(s[0]):standardSections.delete(s[0]);
+  renderStandard();
+ });
+ recalc();
+}
+function togglePlanUI(){
+ $('standardPlan').classList.toggle('hidden',!isStandard());
+ $('customPlan').classList.toggle('hidden',isStandard());
+ recalc();
+}
+document.querySelectorAll('input[name="examPlanMode"]').forEach(el=>el.addEventListener('change',togglePlanUI));
+$('standardSingle').oninput=recalc;$('standardMultiple').oninput=recalc;
+$('standardMain').onclick=()=>{standardSections.clear();GROUPS[0].sections.forEach(s=>standardSections.add(s[0]));renderStandard()};
+$('standardAll').onclick=()=>{standardSections.clear();GROUPS.forEach(g=>g.sections.forEach(s=>standardSections.add(s[0])));renderStandard()};
+$('standardNone').onclick=()=>{standardSections.clear();renderStandard()};
+renderStandard();togglePlanUI();
 function recalc(){
- let n=0,single=0,multiple=0;
- for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;
- if(p.mode==='quota'){for(const s of g.sections){if(!p.selected.includes(s[0]))continue;single+=Number(p.quotas[s[0]].single)||0;multiple+=Number(p.quotas[s[0]].multiple)||0;}}
- else {const amount=Number(p.count)||0;n+=amount;if(p.kind==='single')single+=amount;else if(p.kind==='multiple')multiple+=amount;}
+ let single=0,multiple=0,mixed=0,total=0;
+ if(isStandard()){
+  single=Number($('standardSingle').value)||0;
+  multiple=Number($('standardMultiple').value)||0;
+  const limits=standardLimits();
+  const valid=standardSections.size>0&&Number.isInteger(single)&&Number.isInteger(multiple)&&single>=0&&multiple>=0&&single<=limits.single&&multiple<=limits.multiple&&single+multiple>0;
+  $('standardSummary').className='msg '+(valid?'ok':'err');
+  $('standardSummary').textContent='總範圍 '+standardSections.size+' 個章節｜單選 '+single+' / '+limits.single+' 題、複選 '+multiple+' / '+limits.multiple+' 題可抽'+(valid?'':'。請確認題數與勾選範圍。');
+ }else{
+  for(const g of GROUPS){
+   const p=plans[g.id];if(!p.enabled)continue;
+   if(p.mode==='quota'){
+    for(const s of g.sections)if(p.selected.includes(s[0])){single+=Number(p.quotas[s[0]].single)||0;multiple+=Number(p.quotas[s[0]].multiple)||0}
+   }else{
+    const amount=Number(p.count)||0;
+    if(p.kind==='single')single+=amount;
+    else if(p.kind==='multiple')multiple+=amount;
+    else mixed+=amount;
+   }
+  }
  }
- const unknown=n;const total=n+single+multiple;
- $('count').value=total;$('quotaSummary').textContent='本次合計 '+total+' 題｜指定單選 '+single+'、指定複選 '+multiple+'、混合／隨機 '+unknown+' 題';
- $('singleCount').textContent=String(single);$('multipleCount').textContent=String(multiple);
+ total=single+multiple+mixed;
+ $('count').value=total;
+ $('quotaSummary').textContent='本次合計 '+total+' 題｜單選 '+single+'、複選 '+multiple+(mixed?'、混合題型 '+mixed:'')+' 題';
+ $('singleCount').textContent=single;
+ $('multipleCount').textContent=multiple;
  const scoreSingle=Number($('scoreSingle').value)||0,scoreMultiple=Number($('scoreMultiple').value)||0;
- $('singleSub').textContent=(single*scoreSingle).toString();$('multipleSub').textContent=(multiple*scoreMultiple).toString();
- $('scoreSummary').textContent='已明確指定的配分小計 '+(single*scoreSingle+multiple*scoreMultiple)+' 分；隨機混合題依實際抽到的單複選數量計分。';
+ $('singleSub').textContent=String(single*scoreSingle);
+ $('multipleSub').textContent=String(multiple*scoreMultiple);
+ $('scoreSummary').textContent='已確認題型配分總計 '+(single*scoreSingle+multiple*scoreMultiple)+' 分'+(mixed?'（另有 '+mixed+' 題隨機混合題型，分數將依實際抽出的單複選題數計算）':'')+'。';
 }
 function renderGroups(){
  $('groupConfig').innerHTML=GROUPS.map(g=>{const p=plans[g.id];const opts=p.mode==='quota'?g.sections.filter(s=>p.selected.includes(s[0])).map(s=>'<tr><td>'+esc(s[1])+'<div class="sub">'+s[0]+'</div></td><td>'+s[2]+'</td><td><input class="planQuota" data-group="'+g.id+'" data-section="'+s[0]+'" data-kind="single" type="number" min="0" max="'+s[2]+'" value="'+p.quotas[s[0]].single+'"></td><td>'+s[3]+'</td><td><input class="planQuota" data-group="'+g.id+'" data-section="'+s[0]+'" data-kind="multiple" type="number" min="0" max="'+s[3]+'" value="'+p.quotas[s[0]].multiple+'" '+(!s[3]?'disabled':'')+'></td></tr>').join(''):'';
@@ -85,9 +141,13 @@ async function active(){
 }
 async function publish(){
  if(!code())return alert('請先驗證老師管理碼');
- const parts=planList();if(!parts.length)return alert('請先設定抽題範圍和題數');
+ const parts=drawParts();if(!parts.length)return alert('請先設定抽題範圍和題數');
+ if(isStandard()){
+  const n=Number($('standardSingle').value),m=Number($('standardMultiple').value),lim=standardLimits();
+  if(!standardSections.size||!Number.isInteger(n)||!Number.isInteger(m)||n<0||m<0||n>lim.single||m>lim.multiple)return alert('正式考試的單選／複選題數超過範圍可抽數量，或輸入不是整數');
+ }
  const subs=[...new Set(parts.flatMap(x=>x.sections))];
- for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;const ss=p.mode==='all'?g.sections:g.sections.filter(s=>p.selected.includes(s[0]));
+ if(!isStandard())for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;const ss=p.mode==='all'?g.sections:g.sections.filter(s=>p.selected.includes(s[0]));
  if(!ss.length)return alert(g.name+' 尚未選擇題庫');
  if(p.mode==='quota')for(const s of ss){const q=p.quotas[s[0]];if(!Number.isInteger(q.single)||!Number.isInteger(q.multiple)||q.single<0||q.multiple<0||q.single>s[2]||q.multiple>s[3])return alert(s[1]+' 出題數超過題庫可抽數或不是有效整數')}
  if(p.mode!=='quota'&&p.count>ss.reduce((n,s)=>n+(p.kind==='multiple'?s[3]:p.kind==='single'?s[2]:s[2]+s[3]),0))return alert(g.name+' 可抽題數不足');
