@@ -46,8 +46,6 @@ $('scoreSingle').oninput=recalc;$('scoreMultiple').oninput=recalc;
 renderGroups();
 function policy(){const on=$('prevent').checked,sec=+$('grace').value||5;$('grace').disabled=!on;$('policyPreview').textContent=on?'已啟用：學生離開考試頁超過 '+sec+' 秒將自動交卷。':'目前未啟用防切換視窗。'}
 $('prevent').onchange=policy;$('grace').oninput=policy;policy();
-document.querySelectorAll('input[type=checkbox][value]').forEach(x=>x.addEventListener('change',renderQuotaRows));
-renderQuotaRows();
 function gatePolicy(){
   const on=$('gateEnabled').checked;
   ['gateStart','gateEnd','gatePassword'].forEach(id=>$(id).disabled=!on);
