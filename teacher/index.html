@@ -23,9 +23,23 @@
 </div>
 </section>
 <section class="card"><div class="stephead"><div class="step">3</div><h2>題庫與抽題配置</h2></div>
-<div class="sub">每個題庫可獨立選擇「全部範圍隨機抽」、「部分範圍隨機抽」，或「精準設定各單選／複選數量」。所有抽題皆為每位學生重新隨機。</div>
-<div id="groupConfig"></div>
-<div class="toolbar"><button class="ghost" id="resetPlan">全部清零</button></div>
+<div class="sub">選擇正式考試模式，或依不同題庫自訂出題。每位學生都會重新隨機抽題。</div>
+<div class="exam-mode-switch">
+  <label><input type="radio" name="examPlanMode" value="standard" checked> <b>正式考試模式</b><small>從勾選的總範圍中，單選 60 題＋複選 20 題</small></label>
+  <label><input type="radio" name="examPlanMode" value="custom"> <b>各題庫自訂模式</b><small>保留全庫／部分範圍隨機與精準單複選設定</small></label>
+</div>
+<div id="standardPlan">
+ <div class="grid2" style="margin:16px 0">
+  <div class="field"><label>總範圍單選題數</label><input id="standardSingle" type="number" min="0" step="1" value="60"></div>
+  <div class="field"><label>總範圍複選題數</label><input id="standardMultiple" type="number" min="0" step="1" value="20"></div>
+ </div>
+ <div class="group"><h3>選擇正式考試的總抽題範圍</h3><p class="sub">可全選 11800，也可加入 90011、90006～90009 或只勾選部分章節。單複選分別從整個選定範圍隨機抽取。</p>
+ <div class="toolbar" style="margin:8px 0 16px"><button id="standardMain" class="secondary" type="button">只選 11800</button><button id="standardAll" class="ghost" type="button">全選所有題庫</button><button id="standardNone" class="ghost" type="button">全部取消</button></div>
+ <div id="standardSections" class="standard-sections"></div></div>
+ <div id="standardSummary" class="msg info">正式考試：單選 60 題＋複選 20 題。</div>
+</div>
+<div id="customPlan" class="hidden"><div id="groupConfig"></div>
+<div class="toolbar"><button class="ghost" id="resetPlan" type="button">全部清零</button></div></div>
 <div id="quotaSummary" class="msg info">本次共 0 題。</div>
 </section>
 <section class="card"><div class="stephead"><div class="step">4</div><h2>題型配分</h2></div>
