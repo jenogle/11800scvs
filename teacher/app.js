@@ -111,33 +111,22 @@ function gatePolicy(){
 }
 $('gateEnabled').onchange=gatePolicy;$('gateStart').oninput=gatePolicy;$('gateEnd').oninput=gatePolicy;gatePolicy();
 async function active(){
-  const {data,error}=await db.rpc('software_exam_get_active');
-  if(error){$('active').className='msg err';$('active').textContent='讀取失敗：'+friendly(error);return}
-  if(!data){$('active').className='msg info';$('active').textContent='目前沒有開放中的考試。';return}
-
-  let html='<b>'+data.title+'</b><br>題數：'+data.question_count+' 題｜防切換：'+(data.prevent_leave?'啟用（'+data.leave_grace_seconds+' 秒）':'關閉')+'｜時段密碼：'+(data.gate_enabled?(data.gate_required?'目前需要密碼':'已設定，目前不需密碼'):'關閉');
-
-  if(code()){
-    const teacher=await db.rpc('software_exam_teacher_session_info_v2',{p_code:code()});
-    const info=teacher.data&&teacher.data[0];
-    if(info){
-      if(info.gate_enabled){
-        const start=info.gate_start_at?new Date(info.gate_start_at).toLocaleString('zh-TW'):'—';
-        const end=info.gate_end_at?new Date(info.gate_end_at).toLocaleString('zh-TW'):'—';
-        html+='<br><br><b>考場密碼：</b><span style="font-size:20px;color:#b42318;font-weight:900">'+(info.room_code||'未設定')+'</span>';
-        html+='<br><span class="sub">密碼時段：'+start+' ～ '+end+'</span>';
-      }else{
-        html+='<br><br><b>考場密碼：</b>本場未啟用時段密碼';
-      }
-    }else{
-      html+='<br><span style="color:#b42318">管理碼錯誤，無法顯示考場密碼。</span>';
-    }
-  }else{
-    html+='<br><span class="sub">輸入老師管理碼後可顯示本場考場密碼。</span>';
-  }
-
-  $('active').className='msg ok';
-  $('active').innerHTML=html;
+ const {data,error}=await db.rpc('software_exam_get_open_rooms_v2');
+ if(error){$('active').className='msg err';$('active').textContent='讀取失敗：'+friendly(error);return}
+ const list=Array.isArray(data)?data:[];
+ if(!list.length){$('active').className='msg info';$('active').textContent='目前沒有開放中的考場。';return}
+ let secure=[];
+ if(code()){
+  const checked=await db.rpc('software_exam_teacher_open_room_details_v2',{p_code:code()});
+  if(!checked.error&&Array.isArray(checked.data))secure=checked.data;
+ }
+ const byId=new Map(secure.map(x=>[x.id,x]));
+ $('active').className='msg ok';
+ $('active').innerHTML='<b>目前共有 '+list.length+' 個考場開放中</b><div class="active-room-details">'+list.map(e=>{
+  const secret=byId.get(e.id),start=secret?.gate_start_at?new Date(secret.gate_start_at).toLocaleString('zh-TW'):'—',end=secret?.gate_end_at?new Date(secret.gate_end_at).toLocaleString('zh-TW'):'—';
+  const gate=secret?(secret.gate_enabled?'<div>考場密碼：<b>'+esc(secret.gate_password||'未設定')+'</b>｜限制時段：'+esc(start)+' ～ '+esc(end)+'</div>':'<div>不需要考場密碼</div>'):'<div class="sub">管理碼驗證後可查看考場密碼</div>';
+  return '<div class="active-room-detail"><b>'+esc(e.title)+'</b><div class="sub">'+Number(e.question_count)+' 題｜'+(e.prevent_leave?'已啟用防切換':'未啟用防切換')+'</div>'+gate+'</div>';
+ }).join('')+'</div>';
 }
 async function publish(){
  if(!code())return alert('請先驗證老師管理碼');
