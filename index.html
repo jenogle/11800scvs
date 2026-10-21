@@ -1,18 +1,21 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>電腦軟體應用乙級｜學生作答</title><link rel="stylesheet" href="/assets/app.css"></head><body>
-<header><div class="wrap"><h1>電腦軟體應用乙級｜學生作答</h1><div id="headInfo" class="sub">載入考試中…</div></div></header>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>電腦軟體應用乙級｜學生作答</title><link rel="stylesheet" href="/assets/app.css"></head><body class="student-ui">
+<header class="student-header"><div class="wrap student-header-inner"><div class="brand"><span class="brand-icon">✦</span><div><h1>11800 <span>EXAM LAB</span></h1><div id="headInfo" class="sub">電腦軟體應用乙級・線上測驗中心</div></div></div><span class="system-online"><i></i> EXAM SYSTEM ONLINE</span></div></header>
 <main class="main">
-<section id="home" class="card">
-<h2 id="examTitle">目前考試</h2><div id="statusBox" class="msg info">正在讀取老師發布的考試…</div>
+<section id="home" class="student-home">
+<div class="student-hero"><span class="eyebrow">YOUR NEXT CHALLENGE STARTS HERE</span><h2>選擇你的<span>考試戰場</span></h2><p>每一場測驗都是一次實力進化。挑選考場，準備迎接挑戰。</p><div class="hero-decoration">✦</div></div>
+<div class="student-room-heading"><h2 id="examTitle">可參加的考場</h2><button type="button" class="ghost" id="reloadRooms">↻ 重新整理</button></div>
+<div id="statusBox" class="msg info">正在搜尋開放中的考場…</div>
+<div id="studentRoomList" class="student-room-list"></div>
 <div id="rules" class="msg warn hidden"></div>
 <div id="gateBox" class="msg warn hidden"></div>
-<div id="loginBox" class="hidden" style="margin-top:16px">
+<div id="loginBox" class="hidden student-checkin"><div class="student-checkin-title"><span>02 / CHECK IN</span><h2>考生報到</h2><p>確認考場資訊後，填入學號與姓名開始測驗。</p></div><div id="selectedRoomName" class="selected-room-name"></div>
  <div class="grid2"><div class="field"><label>學號</label><input id="sid" placeholder="請輸入學號" autocomplete="off"></div><div class="field"><label>姓名</label><input id="sname" placeholder="請輸入姓名" autocomplete="off"></div></div>
  <div id="gatePasswordWrap" class="field hidden" style="margin-top:12px"><label>考場密碼</label><input id="gatePassword" type="password" placeholder="請輸入老師提供的考場密碼"><small>只有指定時段內需要輸入。</small></div>
  <div class="toolbar"><button class="primary" id="startBtn">我已了解規則，開始考試</button></div>
 </div>
 </section>
 
-<section id="exam" class="hidden">
+<section id="exam" class="hidden"><div class="exam-heading"><span class="eyebrow">FOCUS MODE / EXAM IN PROGRESS</span><h2 id="runningTitle">考試進行中</h2></div>
 <div class="stats">
  <div class="stat"><span class="sub">總題數</span><b id="total">0</b></div>
  <div class="stat"><span class="sub">已作答</span><b id="done">0</b></div>
@@ -20,12 +23,12 @@
  <div class="stat"><span class="sub">目前題號</span><b id="now">0 / 0</b></div>
 </div>
 <div id="antiNotice" class="msg warn hidden"></div>
-<div class="card"><div class="progress"><div id="bar"></div></div><div id="nav" class="nav"></div></div>
+<div class="card exam-navigation"><div class="exam-card-head"><h3>題目導覽</h3><span class="sub">藍色代表已作答・外框代表目前題目</span></div><div class="progress"><div id="bar"></div></div><div id="nav" class="nav"></div></div>
 <div id="qbox" class="card"></div>
 <div class="card"><div class="toolbar" style="justify-content:space-between"><div class="toolbar"><button class="ghost" id="prevBtn">上一題</button><button class="secondary" id="nextBtn">下一題</button></div><button class="primary" id="submitBtn">交卷</button></div></div>
 </section>
 
-<section id="result" class="hidden">
+<section id="result" class="hidden"><div class="result-intro"><span class="eyebrow">MISSION COMPLETE</span><h2>挑戰完成！</h2></div>
   <div class="card">
     <h2>作答完成</h2>
     <div style="font-size:46px;font-weight:900;color:#1d4ed8"><span id="score">0</span> / <span id="full">0</span></div>
