@@ -77,3 +77,79 @@ body:has(#standardPlan) .standard-bank .checks{grid-template-columns:1fr}
 body:has(#standardPlan) .standard-bank .checks label{display:flex;align-items:center;gap:8px;font-weight:500}
 body:has(#standardPlan) .standard-bank .checks input{accent-color:#315de6}
 @media(max-width:800px){body:has(#standardPlan) .exam-mode-switch,body:has(#standardPlan) .standard-sections{grid-template-columns:1fr}}
+
+/* STUDENT EXPERIENCE / NEON EXAM LAB */
+body.student-ui{--bg:#080d1d;--card:#101a30;--line:#263958;--text:#f2f6ff;--muted:#a4b3d1;--blue:#7374ff;--blue2:#6062de;background:radial-gradient(ellipse at 8% 2%,rgba(84,72,209,.23),transparent 40%),radial-gradient(ellipse at 90% 30%,rgba(29,177,215,.13),transparent 45%),#080d1d;color:var(--text);min-height:100vh}
+body.student-ui header{background:rgba(7,13,28,.8);border-bottom:1px solid rgba(138,156,218,.16);backdrop-filter:blur(16px)}
+body.student-ui .main{max-width:1100px;margin:28px auto 70px}
+body.student-ui .student-header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;padding-bottom:18px}
+body.student-ui .brand{display:flex;align-items:center;gap:13px}
+body.student-ui .brand-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(130deg,#7865f5,#1fc9e8);font-size:23px;color:#fff;box-shadow:0 4px 28px rgba(118,100,250,.35)}
+body.student-ui h1{font-size:23px;font-weight:900;letter-spacing:.03em}body.student-ui h1 span{color:#9a9dff}
+body.student-ui .sub{color:var(--muted)}
+body.student-ui .system-online{font-size:11px;font-weight:800;letter-spacing:.12em;color:#8fe3ce;white-space:nowrap}
+body.student-ui .system-online i,body.student-ui .room-live i{width:7px;height:7px;display:inline-block;border-radius:50%;background:#65edb9;box-shadow:0 0 12px #65edb9;margin-right:7px}
+body.student-ui .student-hero{position:relative;overflow:hidden;border:1px solid rgba(143,141,255,.26);border-radius:26px;padding:46px 43px;background:linear-gradient(118deg,#20234d 0%,#132444 55%,#0e3144 100%);box-shadow:0 16px 48px rgba(0,0,0,.15)}
+body.student-ui .eyebrow{color:#98e9ec;font-size:11px;letter-spacing:.17em;font-weight:800}
+body.student-ui .student-hero h2{font-size:clamp(31px,4vw,48px);letter-spacing:-.04em;line-height:1.28;margin:17px 0 12px}
+body.student-ui .student-hero h2 span{color:#9ea5ff;display:inline-block;margin-left:9px}
+body.student-ui .student-hero p{color:#c1cce9;margin:0;line-height:1.8}
+body.student-ui .hero-decoration{position:absolute;right:5%;top:3%;font-size:195px;color:rgba(138,156,255,.075);pointer-events:none}
+body.student-ui .student-room-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:30px 0 12px}
+body.student-ui .student-room-heading h2{font-size:21px}
+body.student-ui .student-room-heading button{background:#1a2740;color:#c5d4f4;border:1px solid #30425e}
+body.student-ui .msg.info{background:rgba(32,54,93,.55);color:#b4d2ff;border-color:#2e436a}
+body.student-ui .msg.warn{background:#352b25;color:#ffdca9;border-color:#785533}
+body.student-ui .msg.err{background:#40252c;color:#ffb5c0;border-color:#7b3b4e}
+body.student-ui .msg.ok{background:#173f38;color:#a2ead0;border-color:#317361}
+body.student-ui .student-room-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0 26px}
+body.student-ui .student-room-card{display:block;width:100%;min-width:0;min-height:200px;background:linear-gradient(160deg,#17263f,#111c33);border:1px solid #30445e;border-radius:19px;padding:23px;text-align:left;color:#ecf2ff;transition:transform .2s,border-color .2s,box-shadow .2s}
+body.student-ui .student-room-card:hover{transform:translateY(-3px);border-color:#8a91fe;box-shadow:0 12px 36px #080d1d}
+body.student-ui .student-room-card.selected{border-color:#a4a3ff;background:linear-gradient(150deg,#2b2957,#112b48);box-shadow:0 0 0 1px rgba(155,157,255,.24),0 15px 37px rgba(77,83,203,.1)}
+body.student-ui .room-topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
+body.student-ui .room-live{font-size:10px;letter-spacing:.12em;font-weight:850;color:#90e5c8}
+body.student-ui .room-arrow{color:#abb3e8;font-size:24px;font-weight:500}
+body.student-ui .student-room-card h3{font-size:20px;line-height:1.45;margin:23px 0 18px;overflow-wrap:anywhere}
+body.student-ui .room-details{display:flex;gap:8px;flex-wrap:wrap;color:#b6c6e5;font-size:12px;font-weight:600}
+body.student-ui .room-details span{border:1px solid #33445d;border-radius:7px;padding:7px 9px}
+body.student-ui .room-enter{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:17px;border-top:1px solid #354762;color:#aaaaff;font-weight:800;font-size:13px}
+body.student-ui .room-enter span{font-size:22px}
+body.student-ui .student-checkin{border:1px solid #36456d;background:linear-gradient(155deg,#192641,#131b31);border-radius:22px;padding:30px;margin-top:26px!important}
+body.student-ui .student-checkin-title span{font-size:11px;letter-spacing:.18em;color:#a1a4ff;font-weight:800}
+body.student-ui .student-checkin-title h2{font-size:27px;margin:9px 0}
+body.student-ui .student-checkin-title p{color:#adbfdd;margin:0 0 18px}
+body.student-ui .selected-room-name{background:#2a315d;border:1px solid #5c66ab;border-radius:11px;padding:12px 15px;color:#dbe1ff;font-weight:800;margin-bottom:22px}
+body.student-ui .field label{color:#dbe7ff}
+body.student-ui input,body.student-ui select{background:#0d172a;border:1px solid #3a5070;color:#fff}
+body.student-ui input::placeholder{color:#8295b1}
+body.student-ui input:focus-visible,body.student-ui button:focus-visible{outline:2px solid #a8a8ff;outline-offset:2px}
+body.student-ui .primary{background:linear-gradient(115deg,#6667ef,#8359ef);color:#fff;box-shadow:0 7px 24px rgba(90,87,228,.22)}
+body.student-ui .secondary{background:#2f3467;color:#e2e5ff}
+body.student-ui .ghost{background:#1a2944;color:#e2ecff}
+body.student-ui .card,body.student-ui .stat{background:linear-gradient(160deg,#17223b,#101b31);border:1px solid #30405d;box-shadow:0 10px 36px rgba(0,0,0,.10)}
+body.student-ui .card{border-radius:20px}
+body.student-ui .exam-heading{margin:10px 0 23px}
+body.student-ui .exam-heading h2{font-size:28px;margin-top:9px}
+body.student-ui .stats{margin-bottom:16px}
+body.student-ui .stat{border-radius:16px;padding:20px}
+body.student-ui .stat b{font-size:27px;color:#c2bcff}
+body.student-ui .progress{background:#303b5c;height:10px;margin-bottom:19px}
+body.student-ui .progress>div{background:linear-gradient(90deg,#6e77f7,#40d8e4);border-radius:999px}
+body.student-ui .exam-card-head{display:flex;justify-content:space-between;align-items:center;gap:14px}
+body.student-ui .exam-card-head h3{margin:0 0 8px}
+body.student-ui .nav button{color:#afc0dc;background:#27354f;border:1px solid #354764}
+body.student-ui .nav button.done{color:#fff;background:#515ad0;border-color:#747ef8}
+body.student-ui .nav button.current{outline:2px solid #79dbf5;outline-offset:1px}
+body.student-ui .question{font-size:19px;line-height:1.9}
+body.student-ui .option{background:#142239;border:1px solid #344863;padding:16px;border-radius:12px;transition:background .14s,border-color .14s}
+body.student-ui .option:hover{background:#1b3151;border-color:#7e89e7}
+body.student-ui .option:has(input:checked){background:#2c315d;border-color:#9797ff}
+body.student-ui .option input{accent-color:#898bff;margin-top:5px}
+body.student-ui .badge.single{background:#1b4f61;color:#a0eaff}
+body.student-ui .badge.multiple{background:#54412a;color:#ffd29e}
+body.student-ui .result-intro{padding:28px 0}
+body.student-ui .result-intro h2{font-size:38px;margin:10px 0}
+body.student-ui #result .card:first-of-type{border-color:#7270c8;background:linear-gradient(125deg,#222751,#12364b)}
+body.student-ui .overlaybox{background:#172039;color:#f1f4ff}
+@media(max-width:800px){body.student-ui .student-room-list{grid-template-columns:1fr}body.student-ui .student-hero{padding:34px 23px}body.student-ui .system-online{display:none}body.student-ui .student-checkin{padding:20px}body.student-ui .student-room-card{min-height:180px}body.student-ui .exam-card-head{display:block}body.student-ui .stats{grid-template-columns:repeat(2,minmax(0,1fr))}body.student-ui .result-intro h2{font-size:31px}}
+@media(prefers-reduced-motion:reduce){body.student-ui .student-room-card{transition:none}}
