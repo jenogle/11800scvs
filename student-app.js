@@ -4,28 +4,44 @@ let activeExam=null,attemptId=null,qs=[],ans={},idx=0,student=null,submitted=fal
 let leaveTimer=null,leaveDeadline=null;
 function only(id){['home','exam','result'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
 function friendly(e){return e?.message||'發生未知錯誤'}
-async function loadExam(){
- const {data,error}=await db.rpc('software_exam_get_active');
- if(error){$('statusBox').className='msg err';$('statusBox').textContent='讀取考試失敗：'+friendly(error);return}
- activeExam=data;
- if(!data){$('examTitle').textContent='目前沒有開放中的考試';$('statusBox').className='msg warn';$('statusBox').textContent='老師尚未開放考試。';$('loginBox').classList.add('hidden');return}
- $('examTitle').textContent=data.title;$('statusBox').className='msg info';$('statusBox').textContent='本次考試共 '+data.question_count+' 題。題型與範圍由老師設定。';
- if(data.prevent_leave){$('rules').classList.remove('hidden');$('rules').innerHTML='<b>本次考試已啟用防切換視窗。</b><br>考試開始後，若切換分頁、最小化瀏覽器或離開考試頁，將開始 '+data.leave_grace_seconds+' 秒倒數；若未在時間內回來，系統會直接交卷。';}
- else $('rules').classList.add('hidden');
- if(data.gate_enabled){
-   $('gateBox').classList.remove('hidden');
-   if(data.gate_required){
-     $('gateBox').innerHTML='<b>目前為受密碼保護時段。</b><br>請輸入老師現場提供的考場密碼後才能開始作答。';
-     $('gatePasswordWrap').classList.remove('hidden');
-   }else{
-     $('gateBox').innerHTML='<b>本場有設定密碼時段，但目前不在限制時間內。</b><br>現在為公開考場，可直接開始作答。';
-     $('gatePasswordWrap').classList.add('hidden');
-   }
- }else{
-   $('gateBox').classList.add('hidden');$('gatePasswordWrap').classList.add('hidden');
- }
- $('loginBox').classList.remove('hidden');$('headInfo').textContent=data.title;
+let openRooms=[],chosenRoomId=null;
+function roomMarkup(room){
+ const safe=escapeHtml;
+ return '<button type="button" class="student-room-card'+(chosenRoomId===room.id?' selected':'')+'" data-room-id="'+safe(room.id)+'" aria-pressed="'+(chosenRoomId===room.id)+'">'+
+ '<div class="room-topline"><span class="room-live"><i></i> OPEN NOW</span><span class="room-arrow">↗</span></div>'+
+ '<h3>'+safe(room.title)+'</h3>'+
+ '<div class="room-details"><span>◈ '+Number(room.question_count)+' 題</span><span>◉ '+(room.prevent_leave?'防切換':'一般考試')+'</span><span>⌑ '+(room.gate_required?'考場密碼':'免密碼')+'</span></div>'+
+ '<div class="room-enter">選擇此考場 <span>→</span></div></button>';
 }
+function chooseRoom(id){
+ if(attemptId&&!submitted)return;
+ const room=openRooms.find(r=>r.id===id);if(!room)return;
+ chosenRoomId=id;activeExam=room;
+ document.querySelectorAll('.student-room-card').forEach(btn=>{
+ const yes=btn.dataset.roomId===id;btn.classList.toggle('selected',yes);btn.setAttribute('aria-pressed',String(yes));
+ });
+ $('selectedRoomName').textContent='已選擇考場｜'+room.title;
+ $('rules').classList.toggle('hidden',!room.prevent_leave);
+ if(room.prevent_leave)$('rules').textContent='本場啟用防切換：離開頁面超過 '+room.leave_grace_seconds+' 秒將自動交卷。';
+ $('gateBox').classList.toggle('hidden',!room.gate_enabled);
+ $('gatePasswordWrap').classList.toggle('hidden',!room.gate_required);
+ if(room.gate_enabled)$('gateBox').textContent=room.gate_required?'此考場目前需要老師提供的考場密碼。':'本場設定了密碼時段，目前不需要密碼。';
+ $('loginBox').classList.remove('hidden');
+ $('headInfo').textContent='目前選擇｜'+room.title;
+}
+async function loadExam(){
+ const {data,error}=await db.rpc('software_exam_get_open_rooms_v2');
+ if(error){$('statusBox').className='msg err';$('statusBox').textContent='讀取考場失敗：'+friendly(error);return}
+ openRooms=Array.isArray(data)?data:[];
+ $('examTitle').textContent='可參加的考場';
+ $('statusBox').className='msg info';
+ $('statusBox').textContent=openRooms.length?'目前共有 '+openRooms.length+' 個考場開放，請選擇一個開始。':'目前沒有開放中的考場，請稍後重新整理。';
+ $('studentRoomList').innerHTML=openRooms.map(roomMarkup).join('');
+ document.querySelectorAll('.student-room-card').forEach(btn=>btn.addEventListener('click',()=>chooseRoom(btn.dataset.roomId)));
+ if(chosenRoomId&&openRooms.some(r=>r.id===chosenRoomId))chooseRoom(chosenRoomId);
+ else {chosenRoomId=null;activeExam=null;$('loginBox').classList.add('hidden');$('rules').classList.add('hidden');$('gateBox').classList.add('hidden')}
+}
+$('reloadRooms').onclick=loadExam;
 async function startExam(){
  const sid=$('sid').value.trim(),name=$('sname').value.trim();if(!sid||!name)return alert('請輸入學號與姓名');
  $('startBtn').disabled=true;$('startBtn').textContent='正在建立考卷…';
@@ -35,12 +51,13 @@ async function startExam(){
  student={sid,name};attemptId=data.attempt_id;qs=data.questions||[];ans={};idx=0;submitted=false;
  if(activeExam.prevent_leave){$('antiNotice').classList.remove('hidden');$('antiNotice').textContent='防切換已啟用：離開考試頁超過 '+activeExam.leave_grace_seconds+' 秒將自動交卷。'}
  else $('antiNotice').classList.add('hidden');
+ $('runningTitle').textContent=activeExam.title;
  only('exam');renderNav();render();bindLeaveGuard();
 }
-function renderNav(){$('nav').innerHTML=qs.map((q,i)=>'<button id="n'+i+'" onclick="go('+i+')">'+(i+1)+'</button>').join('')}
+function renderNav(){$('nav').innerHTML=qs.map((q,i)=>'<button type="button" id="n'+i+'" onclick="go('+i+')">'+(i+1)+'</button>').join('')}
 function render(){
  const q=qs[idx],sel=ans[q.id]||[],t=q.kind==='multiple'?'checkbox':'radio';
- $('qbox').innerHTML='<div class="question">'+(idx+1)+'. '+q.prompt+' <span class="badge '+q.kind+'">'+(q.kind==='multiple'?'複選題':'單選題')+'</span></div><div class="sub">'+q.section_title+'</div>'+
+ $('qbox').innerHTML='<div class="question">'+(idx+1)+'. '+escapeHtml(q.prompt)+' <span class="badge '+q.kind+'">'+(q.kind==='multiple'?'複選題':'單選題')+'</span></div><div class="sub">'+q.section_title+'</div>'+
  q.options.map((o,i)=>'<label class="option"><input type="'+t+'" name="q_'+q.id+'" '+(sel.includes(i+1)?'checked':'')+' onchange="pick(\''+q.id+'\','+(i+1)+',this.checked,\''+q.kind+'\')"><span><b>'+String.fromCharCode(65+i)+'.</b> '+o+'</span></label>').join('');
  document.querySelectorAll('#nav button').forEach((b,i)=>b.classList.toggle('current',i===idx));stats();
 }
