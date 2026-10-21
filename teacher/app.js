@@ -193,9 +193,8 @@ async function setRoomOpen(id,opening){
  if(!code())return alert('請先輸入老師管理碼');
  const room=examSessions.find(e=>e.exam_id===id);
  if(!room)return alert('找不到考場，請重新整理');
- const current=examSessions.find(e=>e.is_open&&e.exam_id!==id);
  const prompt=opening
-  ? ('要開放「'+room.title+'」嗎？'+(current?'\n目前開放中的「'+current.title+'」將自動關閉。':''))
+  ? ('要開放「'+room.title+'」嗎？其他考場會維持原本的開放狀態。')
   : ('確定要關閉「'+room.title+'」嗎？學生將無法再進入這個考場。');
  if(!confirm(prompt))return;
  const {error}=await db.rpc('software_exam_teacher_set_exam_open_v2',{p_code:code(),p_exam_id:id,p_open:opening});
