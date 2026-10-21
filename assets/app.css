@@ -153,3 +153,10 @@ body.student-ui #result .card:first-of-type{border-color:#7270c8;background:line
 body.student-ui .overlaybox{background:#172039;color:#f1f4ff}
 @media(max-width:800px){body.student-ui .student-room-list{grid-template-columns:1fr}body.student-ui .student-hero{padding:34px 23px}body.student-ui .system-online{display:none}body.student-ui .student-checkin{padding:20px}body.student-ui .student-room-card{min-height:180px}body.student-ui .exam-card-head{display:block}body.student-ui .stats{grid-template-columns:repeat(2,minmax(0,1fr))}body.student-ui .result-intro h2{font-size:31px}}
 @media(prefers-reduced-motion:reduce){body.student-ui .student-room-card{transition:none}}
+
+/* Teacher live multi-room details */
+body:has(#roomManager) .active-room-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+body:has(#roomManager) .active-room-detail{padding:15px;border:1px solid #bbdfc8;background:#fff;border-radius:12px;line-height:1.7;overflow-wrap:anywhere;color:#284c3a}
+body:has(#roomManager) .active-room-detail>b{font-size:15px;color:#163a2b}
+body:has(#roomManager) .active-room-detail .sub{margin:4px 0 7px}
+@media(max-width:800px){body:has(#roomManager) .active-room-details{grid-template-columns:1fr}}
