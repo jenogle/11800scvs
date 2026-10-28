@@ -104,7 +104,8 @@ async function startExam(){
 }
 function renderNav(){$('nav').innerHTML=qs.map((q,i)=>'<button type="button" id="n'+i+'" onclick="go('+i+')">'+(i+1)+'</button>').join('')}
 function render(){
- const q=qs[idx],sel=ans[q.id]||[],t=q.kind==='multiple'?'checkbox':'radio';
+ const q=qs[idx];if(!q){$('qbox').textContent='題目暫時無法顯示，請重新整理或通知老師。';return}
+ const sel=ans[q.id]||[],t=q.kind==='multiple'?'checkbox':'radio';
  $('qbox').innerHTML='<div class="question">'+(idx+1)+'. '+escapeHtml(q.prompt)+' <span class="badge '+q.kind+'">'+(q.kind==='multiple'?'複選題':'單選題')+'</span></div><div class="sub">'+q.section_title+'</div>'+
  (Array.isArray(q.options)?q.options:[]).map((o,i)=>'<label class="option"><input type="'+t+'" name="q_'+q.id+'" '+(sel.includes(i+1)?'checked':'')+' onchange="pick(\''+q.id+'\','+(i+1)+',this.checked,\''+q.kind+'\')"><span><b>'+String.fromCharCode(65+i)+'.</b> '+o+'</span></label>').join('');
  document.querySelectorAll('#nav button').forEach((b,i)=>b.classList.toggle('current',i===idx));stats();
