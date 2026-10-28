@@ -13,8 +13,12 @@ const GROUPS=[
 const plans=Object.fromEntries(GROUPS.map(g=>[g.id,{enabled:g.id==='11800',mode:'all',selected:g.sections.map(s=>s[0]),kind:'mixed',count:g.id==='11800'?40:0,quotas:Object.fromEntries(g.sections.map(s=>[s[0],{single:0,multiple:0}]))}]));
 function esc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch]));}
 function selected(){return [...new Set(GROUPS.filter(g=>plans[g.id].enabled).flatMap(g=>plans[g.id].selected))]}
-function planList(){return GROUPS.filter(g=>plans[g.id].enabled).map(g=>{const p=plans[g.id];return {group:g.id,mode:p.mode,sections:p.mode==='all'?g.sections.map(s=>s[0]):p.selected,kind:p.kind,count:+p.count||0,quotas:Object.fromEntries(Object.entries(p.quotas).filter(([s])=>(p.mode==='all'||p.selected.includes(s))))}}).filter(p=>p.mode==='quota'?Object.values(p.quotas).some(q=>q.single||q.multiple):p.count>0)}
-
+function planList(){return GROUPS.filter(g=>plans[g.id].enabled).map(g=>{
+ const p=plans[g.id],sections=p.mode==='all'?g.sections.map(s=>s[0]):p.selected;
+ const hasMultiple=g.sections.some(s=>sections.includes(s[0])&&s[3]>0);
+ const kind=!hasMultiple?'single':p.kind;
+ return {group:g.id,mode:p.mode,sections,kind,count:Number(p.count)||0,quotas:Object.fromEntries(Object.entries(p.quotas).filter(([s])=>sections.includes(s)))};
+}).filter(p=>p.mode==='quota'?Object.values(p.quotas).some(q=>q.single||q.multiple):p.count>0)}
 
 const officialSections={
  '11800':new Set(GROUPS[0].sections.map(s=>s[0])),
@@ -98,7 +102,7 @@ function renderGroups(){
  $('groupConfig').innerHTML=GROUPS.map(g=>{const p=plans[g.id];const opts=p.mode==='quota'?g.sections.filter(s=>p.selected.includes(s[0])).map(s=>'<tr><td>'+esc(s[1])+'<div class="sub">'+s[0]+'</div></td><td>'+s[2]+'</td><td><input class="planQuota" data-group="'+g.id+'" data-section="'+s[0]+'" data-kind="single" type="number" min="0" max="'+s[2]+'" value="'+p.quotas[s[0]].single+'"></td><td>'+s[3]+'</td><td><input class="planQuota" data-group="'+g.id+'" data-section="'+s[0]+'" data-kind="multiple" type="number" min="0" max="'+s[3]+'" value="'+p.quotas[s[0]].multiple+'" '+(!s[3]?'disabled':'')+'></td></tr>').join(''):'';
  return '<div class="group plan-group" style="margin-top:16px"><label class="switchrow"><input type="checkbox" class="planEnabled" data-group="'+g.id+'" '+(p.enabled?'checked':'')+'><b>'+esc(g.name)+'</b></label>'+(p.enabled?'<div class="toolbar"><label>抽題模式<select class="planMode" data-group="'+g.id+'"><option value="all" '+(p.mode==='all'?'selected':'')+'>全題庫隨機</option><option value="partial" '+(p.mode==='partial'?'selected':'')+'>部分題庫隨機</option><option value="quota" '+(p.mode==='quota'?'selected':'')+'>精準指定單／複選</option></select></label></div>'+
  (p.mode!=='all'?'<div class="checks" style="margin:14px 0">'+g.sections.map(s=>'<label><input type="checkbox" class="planSection" data-group="'+g.id+'" value="'+s[0]+'" '+(p.selected.includes(s[0])?'checked':'')+'> '+esc(s[1])+'</label>').join('')+'</div>':'')+
- (p.mode==='quota'?'<div class="scroll-table"><table><thead><tr><th>題庫</th><th>單選可抽</th><th>單選題數</th><th>複選可抽</th><th>複選題數</th></tr></thead><tbody>'+opts+'</tbody></table></div>':'<div class="grid2"><div class="field"><label>抽選題數</label><input class="planCount" data-group="'+g.id+'" type="number" min="0" value="'+p.count+'"></div><div class="field"><label>題型</label><select class="planKind" data-group="'+g.id+'"><option value="mixed" '+(p.kind==='mixed'?'selected':'')+'>單選＋複選</option><option value="single" '+(p.kind==='single'?'selected':'')+'>僅單選</option><option value="multiple" '+(p.kind==='multiple'?'selected':'')+'>僅複選</option></select></div></div>'):'')+'</div>';
+ (p.mode==='quota'?'<div class="scroll-table"><table><thead><tr><th>題庫</th><th>單選可抽</th><th>單選題數</th><th>複選可抽</th><th>複選題數</th></tr></thead><tbody>'+opts+'</tbody></table></div>':'<div class="grid2"><div class="field"><label>抽選題數</label><input class="planCount" data-group="'+g.id+'" type="number" min="0" value="'+p.count+'"></div><div class="field"><label>題型</label><select class="planKind" data-group="'+g.id+'"><option value="mixed" '+(p.kind==='mixed'?'selected':'')+'>單選＋複選</option><option value="single" '+(p.kind==='single'||!g.sections.some(s=>s[3]>0)?'selected':'')+'>僅單選</option><option value="multiple" '+(p.kind==='multiple'?'selected':'')+'>僅複選</option></select></div></div>'):'')+'</div>';
  }).join('');
  document.querySelectorAll('.planEnabled').forEach(x=>x.onchange=()=>{plans[x.dataset.group].enabled=x.checked;renderGroups()});
  document.querySelectorAll('.planMode').forEach(x=>x.onchange=()=>{plans[x.dataset.group].mode=x.value;renderGroups()});
