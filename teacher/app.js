@@ -37,7 +37,17 @@ function officialParts(){
  ];
  return entries.map(([key,kind,input,group])=>({group,mode:'all',sections:[...officialSections[key]],kind,count:Number($(input).value),quotas:{}})).filter(p=>p.count>0);
 }
-function drawParts(){return isStandard()?officialParts():planList()}
+function fixedOfficialParts(){
+ const main=GROUPS[0].sections.map(s=>s[0]),info=GROUPS[1].sections.map(s=>s[0]),common=GROUPS.slice(2).flatMap(g=>g.sections.map(s=>s[0]));
+ return [
+ {group:'11800-single',mode:'all',sections:main,kind:'single',count:35,quotas:{}},
+ {group:'11800-multiple',mode:'all',sections:main,kind:'multiple',count:20,quotas:{}},
+ {group:'90011-single',mode:'all',sections:info,kind:'single',count:9,quotas:{}},
+ {group:'common-single',mode:'all',sections:common,kind:'single',count:16,quotas:{}}
+ ];
+}
+function isAdvancedCustom(){return !isStandard()&&$('legacyCustom').open}
+function drawParts(){return isStandard()?fixedOfficialParts():isAdvancedCustom()?planList():officialParts()}
 function limitsFor(sections,kind){
  return GROUPS.flatMap(g=>g.sections).filter(s=>sections.has(s[0])).reduce((n,s)=>n+(kind==='multiple'?s[3]:s[2]),0);
 }
@@ -64,6 +74,10 @@ function renderStandard(){
 function togglePlanUI(){
  $('standardPlan').classList.toggle('hidden',!isStandard());
  $('customPlan').classList.toggle('hidden',isStandard());
+ $('officialScoreSummary').classList.toggle('hidden',!isStandard());
+ $('scoringTable').classList.toggle('hidden',isStandard());
+ $('scoreSummary').classList.toggle('hidden',isStandard());
+ if(isStandard()){$('scoreSingle').value=1;$('scoreMultiple').value=2;}
  recalc();
 }
 document.querySelectorAll('input[name="examPlanMode"]').forEach(el=>el.addEventListener('change',togglePlanUI));
@@ -76,15 +90,17 @@ $('standardMain').onclick=()=>{
 };
 $('standardAll').onclick=()=>{for(const g of GROUPS){const key=['11800','90011'].includes(g.id)?g.id:'common';g.sections.forEach(s=>officialSections[key].add(s[0]))}renderStandard()};
 $('standardNone').onclick=()=>{Object.values(officialSections).forEach(s=>s.clear());renderStandard()};
+$('legacyCustom').addEventListener('toggle',recalc);
 renderStandard();togglePlanUI();
 function recalc(){
  let single=0,multiple=0,mixed=0;
- if(isStandard()){
+ if(isStandard()){single=60;multiple=20;}
+ else if(!isAdvancedCustom()){
   single=Number($('standardSingle').value||0)+Number($('standard90011').value||0)+Number($('standardCommon').value||0);
   multiple=Number($('standardMultiple').value||0);
   const problems=officialValidation();
-  $('standardSummary').className='msg '+(problems.length?'err':'ok');
-  $('standardSummary').textContent=problems.length?'請檢查設定：'+problems.join('；'):'11800 單選 '+$('standardSingle').value+'、複選 '+$('standardMultiple').value+'｜90011 '+$('standard90011').value+'｜共同科目 '+$('standardCommon').value+'｜合計 '+(single+multiple)+' 題';
+  $('customSummary').className='msg '+(problems.length?'err':'ok');
+  $('customSummary').textContent=problems.length?'設定需修正：'+problems.join('；'):'11800 單選 '+$('standardSingle').value+'、複選 '+$('standardMultiple').value+'｜90011 '+$('standard90011').value+'｜共同科目 '+$('standardCommon').value+'｜合計 '+(single+multiple)+' 題';
  }else{
   for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;
    if(p.mode==='quota'){for(const s of g.sections)if(p.selected.includes(s[0])){single+=Number(p.quotas[s[0]].single)||0;multiple+=Number(p.quotas[s[0]].multiple)||0}}
@@ -94,11 +110,10 @@ function recalc(){
  const total=single+multiple+mixed;
  $('count').value=total;$('quotaSummary').textContent='合計 '+total+' 題｜單選 '+single+'、複選 '+multiple+(mixed?'、單複選混合 '+mixed:'');
  $('singleCount').textContent=single;$('multipleCount').textContent=multiple;
- const sp=Number($('scoreSingle').value)||0,mp=Number($('scoreMultiple').value)||0;
+ const sp=isStandard()?1:Number($('scoreSingle').value)||0,mp=isStandard()?2:Number($('scoreMultiple').value)||0;
  $('singleSub').textContent=String(single*sp);$('multipleSub').textContent=String(multiple*mp);
  $('scoreSummary').textContent='總分 '+(single*sp+multiple*mp)+(mixed?'（另有 '+mixed+' 題混合抽選，實際滿分以學生考卷為準）':' 分');
 }
-
 function renderGroups(){
  $('groupConfig').innerHTML=GROUPS.map(g=>{
   const p=plans[g.id], hasMultiple=g.sections.some(s=>s[3]>0);
@@ -159,7 +174,7 @@ async function publish(){
    const errors=officialValidation();if(errors.length)return alert('正式考試設定有誤：'+errors.join('；'));
  }
  const subs=[...new Set(parts.flatMap(x=>x.sections))];
- if(!isStandard())for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;const ss=p.mode==='all'?g.sections:g.sections.filter(s=>p.selected.includes(s[0]));
+ if(isAdvancedCustom())for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;const ss=p.mode==='all'?g.sections:g.sections.filter(s=>p.selected.includes(s[0]));
  if(!ss.length)return alert(g.name+' 尚未選擇題庫');
  if(p.mode==='quota')for(const s of ss){const q=p.quotas[s[0]];if(!Number.isInteger(q.single)||!Number.isInteger(q.multiple)||q.single<0||q.multiple<0||q.single>s[2]||q.multiple>s[3])return alert(s[1]+' 出題數超過題庫可抽數或不是有效整數')}
  if(p.mode!=='quota'&&p.count>ss.reduce((n,s)=>n+(p.kind==='multiple'?s[3]:p.kind==='single'?s[2]:s[2]+s[3]),0))return alert(g.name+' 可抽題數不足');
@@ -170,7 +185,7 @@ async function publish(){
  if(![num('scoreSingle'),num('scoreMultiple')].every(n=>Number.isFinite(n)&&n>=0&&n<=100))return alert('配分數值不正確');
  $('publish').disabled=true;
  const localIso=v=>v?new Date(v).toISOString():null;
- const {data,error}=await db.rpc('software_exam_teacher_publish_v6',{p_code:code(),p_title:$('title').value,p_question_count:num('count'),p_type_mode:'mixed',p_subjects:subs,p_draw_mode:'quota',p_open:$('open').value==='true',p_prevent_leave:$('prevent').checked,p_leave_grace_seconds:num('grace')||5,p_gate_enabled:gateOn,p_gate_start_at:localIso($('gateStart').value),p_gate_end_at:localIso($('gateEnd').value),p_gate_password:$('gatePassword').value.trim(),p_subject_quotas:{},p_draw_plan:parts,p_score_single:num('scoreSingle'),p_score_multiple:num('scoreMultiple')});
+ const {data,error}=await db.rpc('software_exam_teacher_publish_v6',{p_code:code(),p_title:$('title').value,p_question_count:num('count'),p_type_mode:'mixed',p_subjects:subs,p_draw_mode:'quota',p_open:$('open').value==='true',p_prevent_leave:$('prevent').checked,p_leave_grace_seconds:num('grace')||5,p_gate_enabled:gateOn,p_gate_start_at:localIso($('gateStart').value),p_gate_end_at:localIso($('gateEnd').value),p_gate_password:$('gatePassword').value.trim(),p_subject_quotas:{},p_draw_plan:parts,p_score_single:isStandard()?1:num('scoreSingle'),p_score_multiple:isStandard()?2:num('scoreMultiple')});
  $('publish').disabled=false;
  $('msg').className='msg '+(error?'err':'ok');
  $('msg').textContent=error?'發布失敗：'+friendly(error):'發布成功，已建立 '+data.available+' 題的考試。';
@@ -216,7 +231,9 @@ function localInputDate(value){
 function populatePlan(segments){
  const keys=['11800-single','11800-multiple','90011-single','common-single'];
  if(segments.length&&segments.every(p=>keys.includes(p.group))){
-  document.querySelector('input[name="examPlanMode"][value="standard"]').checked=true;
+  const official=JSON.stringify(segments.map(p=>[p.group,p.kind,p.count,(p.sections||[]).slice().sort()]).sort())===JSON.stringify(fixedOfficialParts().map(p=>[p.group,p.kind,p.count,p.sections.slice().sort()]).sort());
+  document.querySelector('input[name="examPlanMode"][value="'+(official?'standard':'custom')+'"]').checked=true;
+  $('legacyCustom').open=false;
   const specs=[['11800','standardSingle','11800-single'],['11800','standardMultiple','11800-multiple'],['90011','standard90011','90011-single'],['common','standardCommon','common-single']];
   for(const [key,input,group] of specs){
    const part=segments.find(p=>p.group===group);
@@ -226,6 +243,7 @@ function populatePlan(segments){
   renderStandard();
  }else{
   document.querySelector('input[name="examPlanMode"][value="custom"]').checked=true;
+  $('legacyCustom').open=true;
   for(const g of GROUPS){
    const p=plans[g.id],entry=segments.find(x=>x.group===g.id);
    p.enabled=!!entry;
@@ -268,13 +286,13 @@ function cancelEditExam(){
  $('gateEnabled').checked=false;$('gateStart').value='';$('gateEnd').value='';$('gatePassword').value='';gatePolicy();
  $('scoreSingle').value=1;$('scoreMultiple').value=1;
  document.querySelector('input[name="examPlanMode"][value="standard"]').checked=true;
- $('standardMain').click();togglePlanUI();
+ $('standardMain').click();$('legacyCustom').open=false;togglePlanUI();
  $('msg').textContent='已返回建立新考場模式。';
 }
 async function saveExamChanges(){
  if(!editingExamId||!originalEditConfig)return;
  const old=originalEditConfig,locked=Number(old.attempt_count)>0||!Array.isArray(old.draw_plan);
- if(!locked&&isStandard()&&officialValidation().length)return alert('正式考試設定有誤：'+officialValidation().join('；'));
+ if(!locked&&!isStandard()&&!isAdvancedCustom()&&officialValidation().length)return alert('自訂考試設定有誤：'+officialValidation().join('；'));
  const gateOn=$('gateEnabled').checked,localIso=v=>v?new Date(v).toISOString():null;
  if(gateOn&&(!$('gateStart').value||!$('gateEnd').value||!$('gatePassword').value.trim()))return alert('請完整設定考場密碼時段');
  const args={p_code:code(),p_exam_id:editingExamId,p_title:$('title').value.trim(),p_prevent_leave:$('prevent').checked,p_leave_grace_seconds:Number($('grace').value)||5,p_gate_enabled:gateOn,p_gate_start_at:localIso($('gateStart').value),p_gate_end_at:localIso($('gateEnd').value),p_gate_password:$('gatePassword').value.trim()};
@@ -282,8 +300,8 @@ async function saveExamChanges(){
  if(!locked){
   args.p_draw_plan=drawParts();
   if(!args.p_draw_plan.length)return alert('請設定抽題數量');
-  args.p_score_single=Number($('scoreSingle').value);
-  args.p_score_multiple=Number($('scoreMultiple').value);
+  args.p_score_single=isStandard()?1:Number($('scoreSingle').value);
+  args.p_score_multiple=isStandard()?2:Number($('scoreMultiple').value);
   if(![args.p_score_single,args.p_score_multiple].every(n=>Number.isFinite(n)&&n>=0&&n<=100))return alert('配分設定錯誤');
  }
  $('saveExam').disabled=true;
