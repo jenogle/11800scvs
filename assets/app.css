@@ -174,3 +174,21 @@ body.student-ui #reviewBox .msg.ok{color:#b9f5d5;background:#173b34;border-color
 body.student-ui #reviewBox .msg.err{color:#ffd4dd;background:#492732;border-color:#ab5468}
 body.student-ui #reviewBox .review-option::selection,body.student-ui #reviewBox .review-option *::selection{background:#c1c8ff;color:#091229}
 @media(max-width:800px){body.student-ui #reviewBox .review-option{padding:14px 12px;gap:10px}body.student-ui #reviewBox .review-option-text{font-size:16px;line-height:1.8}}
+
+/* Official exam grouped quota preset */
+body:has(#standardPlan) .official-exam-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+body:has(#standardPlan) .official-exam-grid>.group:last-child{grid-column:1/-1}
+body:has(#standardPlan) .official-exam-grid .group{margin:0;min-width:0;background:#f9fbff;border:1px solid #e1e8f4}
+body:has(#standardPlan) .official-exam-grid h3{font-size:16px;color:#243b64;margin:0 0 16px}
+body:has(#standardPlan) .official-exam-grid .field{margin-bottom:12px}
+body:has(#standardPlan) .official-exam-grid .field input{font-size:20px;font-weight:800}
+body:has(#standardPlan) .official-exam-grid .checks{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body:has(#standardPlan) .official-choice{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:10px;border-radius:9px;border:1px solid #dbe4f2;background:#fff;cursor:pointer;font-size:13px}
+body:has(#standardPlan) .official-choice:has(input:checked){border-color:#a9bff6;background:#f0f4ff}
+body:has(#standardPlan) .official-choice input{width:auto;accent-color:#315de6}
+body:has(#standardPlan) .official-choice .sub{font-size:11px}
+body:has(#roomManager) .room-metrics{flex-wrap:wrap;row-gap:8px}
+body:has(#roomManager) .room-metrics span:first-child{color:#3157c4}
+body:has(#roomManager) .roomEdit{background:#e9e7ff;color:#453fb1}
+body:has(#roomManager) #editNotice{border-color:#f6c862}
+@media(max-width:800px){body:has(#standardPlan) .official-exam-grid{grid-template-columns:1fr}body:has(#standardPlan) .official-exam-grid>.group:last-child{grid-column:auto}body:has(#standardPlan) .official-exam-grid .checks{grid-template-columns:1fr}}
