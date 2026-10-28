@@ -95,9 +95,10 @@ async function loadReview(){
       if(right&&mine) mark=' ✓';
       else if(right) mark=' ← 正確答案';
       else if(mine) mark=' ← 你的答案';
-      return '<div class="option" style="'+(right?'border-color:#86efac;background:#f0fdf4;':mine?'border-color:#fecaca;background:#fef2f2;':'')+'"><span><b>'+String.fromCharCode(65+n)+'.</b> '+escapeHtml(o)+mark+'</span></div>';
+      const state=right?' review-correct':mine?' review-wrong':'';
+      return '<div class="review-option'+state+'"><span class="review-letter">'+String.fromCharCode(65+n)+'</span><span class="review-option-text">'+escapeHtml(o)+(mark?'<strong class="review-mark">'+escapeHtml(mark)+'</strong>':'')+'</span></div>';
     }).join('');
-    return '<div class="card" style="box-shadow:none;margin-bottom:12px">'+
+    return '<div class="card review-question-card">'+
       '<div class="question">'+(i+1)+'. '+escapeHtml(r.prompt)+' <span class="badge '+(r.kind==='multiple'?'multiple':'single')+'">'+(r.kind==='multiple'?'複選題':'單選題')+'</span></div>'+
       '<div class="msg '+(r.is_correct?'ok':'err')+'"><b>'+(r.is_correct?'答對':'答錯')+'</b>｜你的答案：'+answerLetters(selected)+'｜正確答案：'+answerLetters(correct)+'</div>'+
       '<div style="margin-top:10px">'+options+'</div>'+
