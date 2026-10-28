@@ -25,11 +25,21 @@
 <section class="card"><div class="stephead"><div class="step">3</div><h2>題庫與抽題配置</h2></div>
 <div class="sub">選擇正式考試模式，或依不同題庫自訂出題。每位學生都會重新隨機抽題。</div>
 <div class="exam-mode-switch">
-  <label><input type="radio" name="examPlanMode" value="standard" checked> <b>正式考試模式</b><small>11800 單選35＋複選20／90011 抽9／共同科目抽16</small></label>
-  <label><input type="radio" name="examPlanMode" value="custom"> <b>各題庫自訂模式</b><small>全庫隨機、部分範圍、精準指定單／複選</small></label>
+  <label><input type="radio" name="examPlanMode" value="standard" checked> <b>正式考試</b><small>固定 80 題，不需設定抽題範圍或題數</small></label>
+  <label><input type="radio" name="examPlanMode" value="custom"> <b>自訂考試</b><small>自由調整各題庫範圍、單選與複選數量</small></label>
 </div>
 <div id="standardPlan">
- <p class="sub" style="margin:12px 0">正式考試共 80 題，三種來源分別隨機抽選。可調整各區題數及各區涵蓋的章節。</p>
+ <div class="official-fixed-overview">
+  <h3>正式考試固定配題</h3>
+  <div class="official-fixed-row"><span>11800 電腦軟體應用</span><b>單選 35 題＋複選 20 題</b></div>
+  <div class="official-fixed-row"><span>90011 資訊相關共同科目</span><b>單選 9 題</b></div>
+  <div class="official-fixed-row"><span>90006／90007／90008／90009</span><b>共同科目混合抽單選 16 題</b></div>
+  <div class="official-fixed-total"><span>合計 80 題</span><span>單選 60・複選 20</span></div>
+ </div>
+ <div id="standardSummary" class="msg ok">正式考試抽題結構固定，直接設定考場名稱、監考規則與發布狀態即可。</div>
+</div>
+<div id="customPlan" class="hidden">
+ <p class="sub">選擇章節並調整各區題數；沒有複選題的題庫不會顯示複選欄位。</p>
  <div class="official-exam-grid">
   <div class="group"><h3>11800 電腦軟體應用</h3>
    <div class="grid2"><div class="field"><label>單選題數</label><input id="standardSingle" type="number" min="0" step="1" value="35"></div>
@@ -45,16 +55,15 @@
    <div id="standardSectionsCommon" class="checks"></div>
   </div>
  </div>
- <div class="toolbar"><button id="standardMain" class="secondary" type="button">恢復正式考試預設 35＋20＋9＋16</button><button id="standardAll" class="ghost" type="button">全部範圍</button><button id="standardNone" class="ghost" type="button">清除範圍</button></div>
- <div id="standardSummary" class="msg info">正式考試：11800 單選35＋複選20、90011 9 題、共同科目16 題。</div>
+ <div class="toolbar"><button id="standardMain" class="secondary" type="button">恢復 35＋20＋9＋16 預設</button><button id="standardAll" class="ghost" type="button">全選範圍</button><button id="standardNone" class="ghost" type="button">清除範圍</button></div>
+ <div id="customSummary" class="msg info">自訂考試範圍與題數。</div>
+ <details id="legacyCustom"><summary>進階出題：各題庫獨立隨機／精準指定</summary><div id="groupConfig"></div><div class="toolbar"><button class="ghost" id="resetPlan" type="button">全部清零</button></div></details>
 </div>
-<div id="customPlan" class="hidden"><div id="groupConfig"></div>
-<div class="toolbar"><button class="ghost" id="resetPlan" type="button">全部清零</button></div></div>
 <div id="quotaSummary" class="msg info">本次共 0 題。</div>
 </section>
 <section class="card"><div class="stephead"><div class="step">4</div><h2>題型配分</h2></div>
-<p class="sub">配分依單選與複選分別設定；混合隨機模式依實際抽出的題型計算得分。原有場次不變。</p>
-<table><thead><tr><th>題型</th><th>題數</th><th>每題分數</th><th>小計</th></tr></thead><tbody>
+<p class="sub">正式考試採單選每題 1 分、複選每題 2 分，固定滿分 100 分；自訂考試可調整配分。原有場次不變。</p>
+<div id="officialScoreSummary" class="msg info">正式考試：單選 60 × 1 分＋複選 20 × 2 分＝100 分。</div><table id="scoringTable"><thead><tr><th>題型</th><th>題數</th><th>每題分數</th><th>小計</th></tr></thead><tbody>
 <tr><td>單選</td><td id="singleCount">0</td><td><input id="scoreSingle" type="number" min="0" step="0.5" value="1" style="max-width:110px"></td><td id="singleSub">0</td></tr>
 <tr><td>複選</td><td id="multipleCount">0</td><td><input id="scoreMultiple" type="number" min="0" step="0.5" value="1" style="max-width:110px"></td><td id="multipleSub">0</td></tr>
 </tbody></table><div id="scoreSummary" class="msg info">預估總分 0</div></section>
