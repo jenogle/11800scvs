@@ -160,3 +160,17 @@ body:has(#roomManager) .active-room-detail{padding:15px;border:1px solid #bbdfc8
 body:has(#roomManager) .active-room-detail>b{font-size:15px;color:#163a2b}
 body:has(#roomManager) .active-room-detail .sub{margin:4px 0 7px}
 @media(max-width:800px){body:has(#roomManager) .active-room-details{grid-template-columns:1fr}}
+
+/* Accessible post-exam review — isolated from dark answer-choice styling */
+body.student-ui #reviewBox .review-question-card{margin-bottom:16px;box-shadow:none;background:#15243d;border-color:#384d6c;color:#f2f6ff}
+body.student-ui #reviewBox .review-option{display:flex;align-items:flex-start;gap:12px;margin:9px 0;padding:14px 15px;border:1px solid #425675;border-radius:12px;background:#172941;color:#eef5ff;line-height:1.75;overflow-wrap:anywhere}
+body.student-ui #reviewBox .review-option.review-correct{background:#133f36;border-color:#4dc5a1;color:#e5fff3}
+body.student-ui #reviewBox .review-option.review-wrong{background:#48252e;border-color:#ed859a;color:#fff0f3}
+body.student-ui #reviewBox .review-letter{display:inline-grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.12);color:inherit;font-weight:900}
+body.student-ui #reviewBox .review-option-text{min-width:0;flex:1;color:inherit!important;font-size:15px}
+body.student-ui #reviewBox .review-mark{display:block;margin-top:5px;font-weight:800;color:inherit}
+body.student-ui #reviewBox .review-question-card .question{color:#f2f6ff}
+body.student-ui #reviewBox .msg.ok{color:#b9f5d5;background:#173b34;border-color:#3eaa82}
+body.student-ui #reviewBox .msg.err{color:#ffd4dd;background:#492732;border-color:#ab5468}
+body.student-ui #reviewBox .review-option::selection,body.student-ui #reviewBox .review-option *::selection{background:#c1c8ff;color:#091229}
+@media(max-width:800px){body.student-ui #reviewBox .review-option{padding:14px 12px;gap:10px}body.student-ui #reviewBox .review-option-text{font-size:16px;line-height:1.8}}
