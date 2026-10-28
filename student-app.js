@@ -126,11 +126,11 @@ function bindLeaveGuard(){
  document.addEventListener('visibilitychange',()=>{
   if(!attemptId||submitted)return;
   if(document.hidden){markPageHidden();startLeaveCountdown()}
-  else {returnToExam();if(!submitted)markPageVisible()}
+  else {const expired=!!leaveDeadline&&Date.now()>=leaveDeadline;returnToExam();if(!expired&&!submitted)markPageVisible()}
  });
  // On mobile, showing a system keyboard or permission prompt can blur the window
  // without the student actually switching apps; visibility is a safer signal.
- window.addEventListener('focus',()=>{if(!document.hidden){returnToExam();if(!submitted)markPageVisible()}});
+ window.addEventListener('focus',()=>{if(!document.hidden){const expired=!!leaveDeadline&&Date.now()>=leaveDeadline;returnToExam();if(!expired&&!submitted)markPageVisible()}});
  window.addEventListener('pagehide',markPageHidden);
 }
 function answerLetters(arr){return (arr||[]).map(n=>String.fromCharCode(64+Number(n))).join('、')||'未作答'}
