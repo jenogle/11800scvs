@@ -2,6 +2,54 @@ const db=supabase.createClient('https://juspbhysjkqwzfccrnhb.supabase.co','sb_pu
 const $=x=>document.getElementById(x);
 let activeExam=null,attemptId=null,qs=[],ans={},idx=0,student=null,submitted=false;
 let leaveTimer=null,leaveDeadline=null;
+
+const AUTOSAVE_KEY='11800scvs:student-attempt:v2';
+function saveAttempt(){
+ if(!attemptId||submitted||!qs.length)return;
+ try{
+  const prev=JSON.parse(localStorage.getItem(AUTOSAVE_KEY)||'null');
+  localStorage.setItem(AUTOSAVE_KEY,JSON.stringify({
+   version:2,at:Date.now(),attemptId,activeExam,student,qs,ans,idx,
+   hiddenAt:prev?.attemptId===attemptId?prev.hiddenAt||null:null
+  }));
+ }catch(e){console.warn('Autosave unavailable',e)}
+}
+function markPageHidden(){
+ if(!attemptId||submitted)return;
+ try{
+  saveAttempt();
+  const d=JSON.parse(localStorage.getItem(AUTOSAVE_KEY)||'null');
+  if(d?.attemptId===attemptId){d.hiddenAt=Date.now();localStorage.setItem(AUTOSAVE_KEY,JSON.stringify(d))}
+ }catch(e){console.warn('Pause state unavailable',e)}
+}
+function markPageVisible(){
+ try{
+  const d=JSON.parse(localStorage.getItem(AUTOSAVE_KEY)||'null');
+  if(d?.attemptId===attemptId){d.hiddenAt=null;localStorage.setItem(AUTOSAVE_KEY,JSON.stringify(d))}
+ }catch(e){}
+}
+function clearSavedAttempt(){try{localStorage.removeItem(AUTOSAVE_KEY)}catch(e){}}
+async function restoreAttempt(){
+ let saved;
+ try{saved=JSON.parse(localStorage.getItem(AUTOSAVE_KEY)||'null')}catch(e){clearSavedAttempt();return}
+ if(!saved||saved.version!==2||!saved.attemptId||!Array.isArray(saved.qs))return;
+ if(Date.now()-saved.at>4*60*60*1000){clearSavedAttempt();return}
+ if(!confirm('發現這台裝置有上次未完成的考卷，是否恢復先前的題目與作答？'))return;
+ attemptId=saved.attemptId;activeExam=saved.activeExam;student=saved.student;
+ qs=saved.qs;ans=saved.ans||{};idx=Math.max(0,Math.min(Number(saved.idx)||0,qs.length-1));submitted=false;
+ if(!activeExam||!qs.length){clearSavedAttempt();return}
+ $('runningTitle').textContent=activeExam.title;
+ $('headInfo').textContent='恢復考卷｜'+activeExam.title;
+ if(activeExam.prevent_leave){$('antiNotice').classList.remove('hidden');$('antiNotice').textContent='已恢復考卷；防切換規則仍然生效。'}
+ else $('antiNotice').classList.add('hidden');
+ only('exam');renderNav();render();
+ if(activeExam.prevent_leave&&saved.hiddenAt&&Date.now()-saved.hiddenAt>=Math.max(1,Number(activeExam.leave_grace_seconds)||5)*1000){
+  await autoSubmit('恢復考試時發現離頁超過允許秒數，系統已自動交卷。');
+ }else{
+  markPageVisible();bindLeaveGuard();
+ }
+}
+
 function only(id){['home','exam','result'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
 function friendly(e){return e?.message||'發生未知錯誤'}
 let openRooms=[],chosenRoomId=null;
@@ -52,29 +100,37 @@ async function startExam(){
  if(activeExam.prevent_leave){$('antiNotice').classList.remove('hidden');$('antiNotice').textContent='防切換已啟用：離開考試頁超過 '+activeExam.leave_grace_seconds+' 秒將自動交卷。'}
  else $('antiNotice').classList.add('hidden');
  $('runningTitle').textContent=activeExam.title;
- only('exam');renderNav();render();bindLeaveGuard();
+ only('exam');renderNav();render();saveAttempt();bindLeaveGuard();
 }
 function renderNav(){$('nav').innerHTML=qs.map((q,i)=>'<button type="button" id="n'+i+'" onclick="go('+i+')">'+(i+1)+'</button>').join('')}
 function render(){
  const q=qs[idx],sel=ans[q.id]||[],t=q.kind==='multiple'?'checkbox':'radio';
  $('qbox').innerHTML='<div class="question">'+(idx+1)+'. '+escapeHtml(q.prompt)+' <span class="badge '+q.kind+'">'+(q.kind==='multiple'?'複選題':'單選題')+'</span></div><div class="sub">'+q.section_title+'</div>'+
- q.options.map((o,i)=>'<label class="option"><input type="'+t+'" name="q_'+q.id+'" '+(sel.includes(i+1)?'checked':'')+' onchange="pick(\''+q.id+'\','+(i+1)+',this.checked,\''+q.kind+'\')"><span><b>'+String.fromCharCode(65+i)+'.</b> '+o+'</span></label>').join('');
+ (Array.isArray(q.options)?q.options:[]).map((o,i)=>'<label class="option"><input type="'+t+'" name="q_'+q.id+'" '+(sel.includes(i+1)?'checked':'')+' onchange="pick(\''+q.id+'\','+(i+1)+',this.checked,\''+q.kind+'\')"><span><b>'+String.fromCharCode(65+i)+'.</b> '+o+'</span></label>').join('');
  document.querySelectorAll('#nav button').forEach((b,i)=>b.classList.toggle('current',i===idx));stats();
 }
-window.pick=(id,v,ch,kind)=>{if(kind==='single')ans[id]=ch?[v]:[];else{let s=new Set(ans[id]||[]);ch?s.add(v):s.delete(v);ans[id]=[...s].sort((a,b)=>a-b)}stats()};
+window.pick=(id,v,ch,kind)=>{if(kind==='single')ans[id]=ch?[v]:[];else{let s=new Set(ans[id]||[]);ch?s.add(v):s.delete(v);ans[id]=[...s].sort((a,b)=>a-b)}stats();saveAttempt()};
 function stats(){const done=qs.filter(q=>(ans[q.id]||[]).length).length,total=qs.length;$('total').textContent=total;$('done').textContent=done;$('left').textContent=total-done;$('now').textContent=(idx+1)+' / '+total;$('bar').style.width=(total?done/total*100:0)+'%';qs.forEach((q,i)=>$('n'+i)?.classList.toggle('done',(ans[q.id]||[]).length>0))}
-window.go=i=>{idx=i;render()};
+window.go=i=>{idx=i;render();saveAttempt()};
 function cancelLeaveCountdown(){if(leaveTimer){clearInterval(leaveTimer);leaveTimer=null}leaveDeadline=null;$('leaveOverlay').classList.add('hidden')} function returnToExam(){if(!leaveDeadline)return;if(Date.now()>=leaveDeadline){const secs=Math.max(1,Number(activeExam?.leave_grace_seconds)||5);if(leaveTimer){clearInterval(leaveTimer);leaveTimer=null}$('leaveOverlay').classList.add('hidden');autoSubmit('因離開考試頁超過 '+secs+' 秒，系統已自動交卷。');return}cancelLeaveCountdown()}
 function startLeaveCountdown(){
  if(!activeExam?.prevent_leave||submitted||!attemptId||leaveTimer)return;
  const secs=Math.max(1,Number(activeExam.leave_grace_seconds)||5);leaveDeadline=Date.now()+secs*1000;$('countdown').textContent=secs;$('leaveOverlay').classList.remove('hidden');
  leaveTimer=setInterval(()=>{const left=Math.max(0,Math.ceil((leaveDeadline-Date.now())/1000));$('countdown').textContent=left;if(left<=0){clearInterval(leaveTimer);leaveTimer=null;autoSubmit('因離開考試頁超過 '+secs+' 秒，系統已自動交卷。')}},250);
 }
+let leaveGuardBound=false;
 function bindLeaveGuard(){
- if(!activeExam?.prevent_leave)return;
- document.addEventListener('visibilitychange',()=>{if(document.hidden)startLeaveCountdown();else cancelLeaveCountdown()});
- window.addEventListener('blur',()=>{if(!document.hidden)startLeaveCountdown()});
- window.addEventListener('focus',()=>cancelLeaveCountdown());
+ if(!activeExam?.prevent_leave||leaveGuardBound)return;
+ leaveGuardBound=true;
+ document.addEventListener('visibilitychange',()=>{
+  if(!attemptId||submitted)return;
+  if(document.hidden){markPageHidden();startLeaveCountdown()}
+  else {returnToExam();if(!submitted)markPageVisible()}
+ });
+ // On mobile, showing a system keyboard or permission prompt can blur the window
+ // without the student actually switching apps; visibility is a safer signal.
+ window.addEventListener('focus',()=>{if(!document.hidden){returnToExam();if(!submitted)markPageVisible()}});
+ window.addEventListener('pagehide',markPageHidden);
 }
 function answerLetters(arr){return (arr||[]).map(n=>String.fromCharCode(64+Number(n))).join('、')||'未作答'}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -110,9 +166,10 @@ async function submitExam(manual=true,reason=''){
  if(manual&&unanswered&&!confirm('還有 '+unanswered+' 題未作答，確定要交卷嗎？'))return;
  submitted=true;cancelLeaveCountdown();$('submitBtn').disabled=true;$('submitBtn').textContent='交卷中…';
  const {data,error}=await db.rpc('software_exam_submit_attempt_v2',{p_attempt_id:attemptId,p_answers:ans});
- if(error){submitted=false;$('submitBtn').disabled=false;$('submitBtn').textContent='交卷';alert('交卷失敗：'+friendly(error));return}
+ if(error){submitted=false;saveAttempt();$('submitBtn').disabled=false;$('submitBtn').textContent='交卷';alert('交卷失敗：'+friendly(error));return}
+ clearSavedAttempt();
  $('score').textContent=data.score;$('full').textContent=data.total;$('resultMeta').textContent=(student?.sid||'')+'｜'+(student?.name||'');
  $('resultReason').className='msg '+(manual?'info':'warn');$('resultReason').textContent=reason||'成績已送回老師端。';only('result');await loadReview();
 }
 async function autoSubmit(reason){await submitExam(false,reason)}
-$('startBtn').onclick=startExam;$('prevBtn').onclick=()=>{if(idx>0){idx--;render()}};$('nextBtn').onclick=()=>{if(idx<qs.length-1){idx++;render()}};$('submitBtn').onclick=()=>submitExam(true);loadExam();
+$('startBtn').onclick=startExam;$('prevBtn').onclick=()=>{if(idx>0){idx--;render()}};$('nextBtn').onclick=()=>{if(idx<qs.length-1){idx++;render()}};$('submitBtn').onclick=()=>submitExam(true);loadExam().then(restoreAttempt);
