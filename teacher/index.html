@@ -25,18 +25,28 @@
 <section class="card"><div class="stephead"><div class="step">3</div><h2>題庫與抽題配置</h2></div>
 <div class="sub">選擇正式考試模式，或依不同題庫自訂出題。每位學生都會重新隨機抽題。</div>
 <div class="exam-mode-switch">
-  <label><input type="radio" name="examPlanMode" value="standard" checked> <b>正式考試模式</b><small>從勾選的總範圍中，單選 60 題＋複選 20 題</small></label>
-  <label><input type="radio" name="examPlanMode" value="custom"> <b>各題庫自訂模式</b><small>保留全庫／部分範圍隨機與精準單複選設定</small></label>
+  <label><input type="radio" name="examPlanMode" value="standard" checked> <b>正式考試模式</b><small>11800 單選35＋複選20／90011 抽9／共同科目抽16</small></label>
+  <label><input type="radio" name="examPlanMode" value="custom"> <b>各題庫自訂模式</b><small>全庫隨機、部分範圍、精準指定單／複選</small></label>
 </div>
 <div id="standardPlan">
- <div class="grid2" style="margin:16px 0">
-  <div class="field"><label>總範圍單選題數</label><input id="standardSingle" type="number" min="0" step="1" value="60"></div>
-  <div class="field"><label>總範圍複選題數</label><input id="standardMultiple" type="number" min="0" step="1" value="20"></div>
+ <p class="sub" style="margin:12px 0">正式考試共 80 題，三種來源分別隨機抽選。可調整各區題數及各區涵蓋的章節。</p>
+ <div class="official-exam-grid">
+  <div class="group"><h3>11800 電腦軟體應用</h3>
+   <div class="grid2"><div class="field"><label>單選題數</label><input id="standardSingle" type="number" min="0" step="1" value="35"></div>
+   <div class="field"><label>複選題數</label><input id="standardMultiple" type="number" min="0" step="1" value="20"></div></div>
+   <div id="standardSections11800" class="checks"></div>
+  </div>
+  <div class="group"><h3>90011 資訊相關共同科目</h3>
+   <div class="field"><label>單選題數</label><input id="standard90011" type="number" min="0" step="1" value="9"></div>
+   <div id="standardSections90011" class="checks"></div>
+  </div>
+  <div class="group"><h3>90006／90007／90008／90009 共同科目</h3>
+   <div class="field"><label>四個題庫混合抽取單選題數</label><input id="standardCommon" type="number" min="0" step="1" value="16"></div>
+   <div id="standardSectionsCommon" class="checks"></div>
+  </div>
  </div>
- <div class="group"><h3>選擇正式考試的總抽題範圍</h3><p class="sub">可全選 11800，也可加入 90011、90006～90009 或只勾選部分章節。單複選分別從整個選定範圍隨機抽取。</p>
- <div class="toolbar" style="margin:8px 0 16px"><button id="standardMain" class="secondary" type="button">只選 11800</button><button id="standardAll" class="ghost" type="button">全選所有題庫</button><button id="standardNone" class="ghost" type="button">全部取消</button></div>
- <div id="standardSections" class="standard-sections"></div></div>
- <div id="standardSummary" class="msg info">正式考試：單選 60 題＋複選 20 題。</div>
+ <div class="toolbar"><button id="standardMain" class="secondary" type="button">恢復正式考試預設 35＋20＋9＋16</button><button id="standardAll" class="ghost" type="button">全部範圍</button><button id="standardNone" class="ghost" type="button">清除範圍</button></div>
+ <div id="standardSummary" class="msg info">正式考試：11800 單選35＋複選20、90011 9 題、共同科目16 題。</div>
 </div>
 <div id="customPlan" class="hidden"><div id="groupConfig"></div>
 <div class="toolbar"><button class="ghost" id="resetPlan" type="button">全部清零</button></div></div>
@@ -50,8 +60,8 @@
 </tbody></table><div id="scoreSummary" class="msg info">預估總分 0</div></section>
 <section class="card" id="roomManager"><div class="stephead"><div class="step">5</div><h2>考場管理與控制</h2></div>
 <p class="sub">每個考場都能獨立發布、關閉及查看成績。可同時開放多個考場，互不影響。</p>
-<div class="room-creator"><div><h3>建立新考場</h3><div class="sub">依照上方的考試名稱、抽題與配分設定建立新場次。</div></div><div class="toolbar"><button class="primary" id="publish">發布考試</button><button class="secondary" id="refresh">重新整理考場與成績</button></div></div>
-<div id="msg" class="msg info">尚未操作。</div>
+<div class="room-creator"><div><h3>建立新考場</h3><div class="sub">依照上方的考試名稱、抽題與配分設定建立新場次。</div></div><div class="toolbar"><button class="primary" id="publish">發布考試</button><button class="primary hidden" id="saveExam" type="button">儲存考場修改</button><button class="ghost hidden" id="cancelEdit" type="button">取消編輯</button><button class="secondary" id="refresh">重新整理考場與成績</button></div></div>
+<div id="editNotice" class="msg warn hidden"></div><div id="msg" class="msg info">尚未操作。</div>
 <h3 style="margin-top:24px">我的考場</h3>
 <div id="active" class="msg info">正在讀取開放中的考場資訊…</div>
 <div id="roomList" class="room-list"><div class="sub">輸入老師管理碼後，可查看各場次與獨立控制按鈕。</div></div>
