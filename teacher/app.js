@@ -262,7 +262,14 @@ async function startEditExam(id){
 function cancelEditExam(){
  editingExamId=null;originalEditConfig=null;setStructureLocked(false);
  $('publish').classList.remove('hidden');$('saveExam').classList.add('hidden');$('cancelEdit').classList.add('hidden');
- $('editNotice').classList.add('hidden');$('msg').textContent='已退出編輯模式。';
+ $('editNotice').classList.add('hidden');
+ $('title').value='電腦軟體應用乙級學科測驗';
+ $('prevent').checked=false;$('grace').value=5;policy();
+ $('gateEnabled').checked=false;$('gateStart').value='';$('gateEnd').value='';$('gatePassword').value='';gatePolicy();
+ $('scoreSingle').value=1;$('scoreMultiple').value=1;
+ document.querySelector('input[name="examPlanMode"][value="standard"]').checked=true;
+ $('standardMain').click();togglePlanUI();
+ $('msg').textContent='已返回建立新考場模式。';
 }
 async function saveExamChanges(){
  if(!editingExamId||!originalEditConfig)return;
