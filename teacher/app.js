@@ -170,8 +170,8 @@ async function active(){
 async function publish(){
  if(!code())return alert('請先驗證老師管理碼');
  const parts=drawParts();if(!parts.length)return alert('請先設定抽題範圍和題數');
- if(isStandard()){
-   const errors=officialValidation();if(errors.length)return alert('正式考試設定有誤：'+errors.join('；'));
+ if(!isStandard()&&!isAdvancedCustom()){
+   const errors=officialValidation();if(errors.length)return alert('自訂考試設定有誤：'+errors.join('；'));
  }
  const subs=[...new Set(parts.flatMap(x=>x.sections))];
  if(isAdvancedCustom())for(const g of GROUPS){const p=plans[g.id];if(!p.enabled)continue;const ss=p.mode==='all'?g.sections:g.sections.filter(s=>p.selected.includes(s[0]));
