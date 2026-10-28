@@ -192,3 +192,15 @@ body:has(#roomManager) .room-metrics span:first-child{color:#3157c4}
 body:has(#roomManager) .roomEdit{background:#e9e7ff;color:#453fb1}
 body:has(#roomManager) #editNotice{border-color:#f6c862}
 @media(max-width:800px){body:has(#standardPlan) .official-exam-grid{grid-template-columns:1fr}body:has(#standardPlan) .official-exam-grid>.group:last-child{grid-column:auto}body:has(#standardPlan) .official-exam-grid .checks{grid-template-columns:1fr}}
+
+/* Fixed official exam summary */
+body:has(#standardPlan) .official-fixed-overview{border:1px solid #c9d6f5;border-radius:17px;overflow:hidden;margin-top:17px;background:#f7faff}
+body:has(#standardPlan) .official-fixed-overview h3{padding:19px 21px;margin:0;font-size:18px;color:#263a68;background:#e8efff}
+body:has(#standardPlan) .official-fixed-row,body:has(#standardPlan) .official-fixed-total{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 21px;border-top:1px solid #e0e9f7}
+body:has(#standardPlan) .official-fixed-row>span{color:#546480}
+body:has(#standardPlan) .official-fixed-row>b{color:#244fbc;text-align:right}
+body:has(#standardPlan) .official-fixed-total{background:#e9f1ff;color:#1c3f98;font-size:17px;font-weight:850}
+body:has(#standardPlan) #legacyCustom{border:1px solid #d8e2f2;border-radius:14px;padding:15px;margin-top:20px}
+body:has(#standardPlan) #legacyCustom summary{cursor:pointer;font-weight:750;color:#3557a5}
+body:has(#standardPlan) #customPlan>p.sub{margin:16px 0}
+@media(max-width:800px){body:has(#standardPlan) .official-fixed-row,body:has(#standardPlan) .official-fixed-total{align-items:flex-start;flex-direction:column;gap:6px}body:has(#standardPlan) .official-fixed-row>b{text-align:left}}
