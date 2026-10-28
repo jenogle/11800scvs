@@ -191,16 +191,104 @@ function renderRoomCards(){
   return '<article class="room-card'+(e.is_open?' room-open':'')+'" data-room="'+esc(e.exam_id)+'">'+
     '<div class="room-card-head"><div><h3>'+esc(e.title)+'</h3><div class="sub">建立於 '+esc(date)+' · '+esc(e.question_count)+' 題</div></div>'+
     '<span class="room-status'+(e.is_open?' is-open':'')+'">'+status+'</span></div>'+
-    '<div class="room-metrics"><span>參與紀錄 <b>'+Number(e.attempt_count||0)+'</b></span><span>已交卷 <b>'+Number(e.submitted_count||0)+'</b></span></div>'+
+    '<div class="room-metrics"><span>總分 <b>'+(e.has_mixed_draw?'依實際題型':(e.total_score??e.question_count))+'</b></span><span>參與紀錄 <b>'+Number(e.attempt_count||0)+'</b></span><span>已交卷 <b>'+Number(e.submitted_count||0)+'</b></span></div>'+
     '<div class="toolbar room-actions">'+
     (e.is_open?'<button class="danger roomToggle" data-id="'+esc(e.exam_id)+'" data-open="false">立即關閉考試</button>':
       '<button class="primary roomToggle" data-id="'+esc(e.exam_id)+'" data-open="true">發布考試／重新開放</button>')+
-    '<button class="secondary roomScores" data-id="'+esc(e.exam_id)+'">重新整理成績</button>'+
+    '<button class="secondary roomScores" data-id="'+esc(e.exam_id)+'">重新整理成績</button><button class="ghost roomEdit" data-id="'+esc(e.exam_id)+'">編輯考場</button>'+
     '</div></article>';
  }).join('');
  box.querySelectorAll('.roomToggle').forEach(b=>b.addEventListener('click',()=>setRoomOpen(b.dataset.id,b.dataset.open==='true')));
  box.querySelectorAll('.roomScores').forEach(b=>b.addEventListener('click',()=>showRoomScores(b.dataset.id)));
+ box.querySelectorAll('.roomEdit').forEach(b=>b.addEventListener('click',()=>startEditExam(b.dataset.id)));
 }
+
+function setStructureLocked(locked){
+ document.querySelectorAll('#standardPlan input,#standardPlan button,#customPlan input,#customPlan button,#scoreSingle,#scoreMultiple,input[name="examPlanMode"]').forEach(el=>el.disabled=locked);
+}
+function localInputDate(value){
+ if(!value)return '';
+ const d=new Date(value);
+ if(Number.isNaN(d.getTime()))return '';
+ const offset=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+ return offset.toISOString().slice(0,16);
+}
+function populatePlan(segments){
+ const keys=['11800-single','11800-multiple','90011-single','common-single'];
+ if(segments.length&&segments.every(p=>keys.includes(p.group))){
+  document.querySelector('input[name="examPlanMode"][value="standard"]').checked=true;
+  const specs=[['11800','standardSingle','11800-single'],['11800','standardMultiple','11800-multiple'],['90011','standard90011','90011-single'],['common','standardCommon','common-single']];
+  for(const [key,input,group] of specs){
+   const part=segments.find(p=>p.group===group);
+   $(input).value=part?.count??0;
+   if(part)officialSections[key]=new Set(part.sections||[]);
+  }
+  renderStandard();
+ }else{
+  document.querySelector('input[name="examPlanMode"][value="custom"]').checked=true;
+  for(const g of GROUPS){
+   const p=plans[g.id],entry=segments.find(x=>x.group===g.id);
+   p.enabled=!!entry;
+   if(!entry)continue;
+   p.mode=entry.mode||'all';p.selected=entry.sections||[];
+   p.count=entry.count??0;p.kind=entry.kind||'mixed';
+   for(const s of g.sections){const q=entry.quotas?.[s[0]];p.quotas[s[0]]={single:Number(q?.single)||0,multiple:Number(q?.multiple)||0}}
+  }
+  renderGroups();
+ }
+ togglePlanUI();
+}
+async function startEditExam(id){
+ if(!code())return alert('請先輸入老師管理碼');
+ const {data,error}=await db.rpc('software_exam_teacher_get_config_v2',{p_code:code(),p_exam_id:id});
+ if(error||!data){notice('讀取考場設定失敗：'+friendly(error),true);return}
+ editingExamId=id;originalEditConfig=data;
+ $('title').value=data.title||'';
+ $('prevent').checked=!!data.prevent_leave;$('grace').value=data.leave_grace_seconds||5;policy();
+ $('gateEnabled').checked=!!data.gate_enabled;
+ $('gateStart').value=localInputDate(data.gate_start_at);
+ $('gateEnd').value=localInputDate(data.gate_end_at);
+ $('gatePassword').value=data.gate_password||'';gatePolicy();
+ $('scoreSingle').value=data.score_single??1;$('scoreMultiple').value=data.score_multiple??1;
+ const locked=Number(data.attempt_count)>0||!Array.isArray(data.draw_plan);
+ if(Array.isArray(data.draw_plan))populatePlan(data.draw_plan);
+ else {document.querySelector('input[name="examPlanMode"][value="custom"]').checked=true;togglePlanUI();}
+ setStructureLocked(locked);
+ $('publish').classList.add('hidden');$('saveExam').classList.remove('hidden');$('cancelEdit').classList.remove('hidden');
+ $('editNotice').className='msg warn';
+ $('editNotice').textContent='正在編輯「'+data.title+'」'+(locked?'｜此考場已有作答資料或使用舊版題庫設定，只能修改名稱、監考與密碼。':'｜尚未有學生作答，可修改抽題範圍、題數及配分。');
+ $('title').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function cancelEditExam(){
+ editingExamId=null;originalEditConfig=null;setStructureLocked(false);
+ $('publish').classList.remove('hidden');$('saveExam').classList.add('hidden');$('cancelEdit').classList.add('hidden');
+ $('editNotice').classList.add('hidden');$('msg').textContent='已退出編輯模式。';
+}
+async function saveExamChanges(){
+ if(!editingExamId||!originalEditConfig)return;
+ const old=originalEditConfig,locked=Number(old.attempt_count)>0||!Array.isArray(old.draw_plan);
+ if(!locked&&isStandard()&&officialValidation().length)return alert('正式考試設定有誤：'+officialValidation().join('；'));
+ const gateOn=$('gateEnabled').checked,localIso=v=>v?new Date(v).toISOString():null;
+ if(gateOn&&(!$('gateStart').value||!$('gateEnd').value||!$('gatePassword').value.trim()))return alert('請完整設定考場密碼時段');
+ const args={p_code:code(),p_exam_id:editingExamId,p_title:$('title').value.trim(),p_prevent_leave:$('prevent').checked,p_leave_grace_seconds:Number($('grace').value)||5,p_gate_enabled:gateOn,p_gate_start_at:localIso($('gateStart').value),p_gate_end_at:localIso($('gateEnd').value),p_gate_password:$('gatePassword').value.trim()};
+ if(!args.p_title)return alert('請輸入考試名稱');
+ if(!locked){
+  args.p_draw_plan=drawParts();
+  if(!args.p_draw_plan.length)return alert('請設定抽題數量');
+  args.p_score_single=Number($('scoreSingle').value);
+  args.p_score_multiple=Number($('scoreMultiple').value);
+  if(![args.p_score_single,args.p_score_multiple].every(n=>Number.isFinite(n)&&n>=0&&n<=100))return alert('配分設定錯誤');
+ }
+ $('saveExam').disabled=true;
+ const {error}=await db.rpc(locked?'software_exam_teacher_update_metadata_v2':'software_exam_teacher_update_config_v2',args);
+ $('saveExam').disabled=false;
+ if(error){notice('儲存失敗：'+friendly(error),true);return}
+ const name=args.p_title;cancelEditExam();notice('「'+name+'」修改成功，已更新原本的考場。');
+ await Promise.all([loadExamSessions(),active()]);
+}
+$('saveExam').onclick=saveExamChanges;
+$('cancelEdit').onclick=cancelEditExam;
+
 async function setRoomOpen(id,opening){
  if(!code())return alert('請先輸入老師管理碼');
  const room=examSessions.find(e=>e.exam_id===id);
@@ -228,7 +316,7 @@ async function loadExamSessions(){
   if(!code()) return alert('請先輸入老師管理碼');
   const previousId=$('examSelect').value;
   $('examSelect').innerHTML='<option value="">讀取場次中…</option>';
-  const {data,error}=await db.rpc('software_exam_teacher_exam_list_v2',{p_code:code()});
+  const {data,error}=await db.rpc('software_exam_teacher_exam_list_v3',{p_code:code()});
   if(error){
     $('examSelect').innerHTML='<option value="">讀取失敗</option>';
     $('examSummary').className='msg err';
