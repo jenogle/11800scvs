@@ -1,0 +1,447 @@
+{
+  "source": "original user-supplied PDF files (hash verified)",
+  "clips": [
+    {
+      "id": "11800-01-131@116",
+      "file": "11800-01-131.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 12,
+      "clip": [
+        105.0,
+        228.77,
+        553.32,
+        567.42
+      ],
+      "image_width": 897,
+      "image_height": 678,
+      "sha256": "a86ac2521acbc707d5a619bfc6d4f2b0ccc3f2e434ac81fba42ce4f7ccffc076",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "11800-02-076@116",
+      "file": "11800-02-076.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 34,
+      "clip": [
+        105.0,
+        450.22,
+        553.32,
+        599.82
+      ],
+      "image_width": 897,
+      "image_height": 300,
+      "sha256": "3e7728ee18705ae940096259a71aa8b6ca334a17472fdd1275ee9df3fac1e301",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "11800-02-092@116",
+      "file": "11800-02-092.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 36,
+      "clip": [
+        105.0,
+        100.13,
+        553.32,
+        272.32
+      ],
+      "image_width": 897,
+      "image_height": 345,
+      "sha256": "1798173acf12dacbdcdb2d4e1b1101ae9397b3f57a6a606ec17f8082f72b1370",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "11800-02-093@116",
+      "file": "11800-02-093.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 36,
+      "clip": [
+        105.0,
+        273.32,
+        553.32,
+        457.5
+      ],
+      "image_width": 897,
+      "image_height": 369,
+      "sha256": "77a2f8e7f01745b2a21320bde7c9d848cb851713138837b70051cb5baa66e2ff",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "11800-02-096@116",
+      "file": "11800-02-096.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 36,
+      "clip": [
+        105.0,
+        626.05,
+        553.32,
+        795.92
+      ],
+      "image_width": 897,
+      "image_height": 340,
+      "sha256": "cb87eca0a3e131bd3a9d9e7e917cac45183ad76261d8ad5c692bfc1d0789cea0",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "11800-02-101@116",
+      "file": "11800-02-101.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 37,
+      "clip": [
+        105.0,
+        439.42,
+        553.32,
+        695.37
+      ],
+      "image_width": 897,
+      "image_height": 513,
+      "sha256": "3a9d12ab93b1aff8ae1da1c7869a00a6adf0dd267a662441057ffd26bff62c38",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "11800-02-116@116",
+      "file": "11800-02-116.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 38,
+      "clip": [
+        105.0,
+        689.77,
+        553.32,
+        795.92
+      ],
+      "image_width": 897,
+      "image_height": 213,
+      "sha256": "637bebbdda4b8cfa2959a04f3487df827294dc5a43b48d6382a01b454dc8a133",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "11800-04-071@116",
+      "file": "11800-04-071.png",
+      "source_pdf": "118002A15.pdf",
+      "page": 63,
+      "clip": [
+        105.0,
+        43.35,
+        553.32,
+        206.53
+      ],
+      "image_width": 897,
+      "image_height": 328,
+      "sha256": "e1d90935cfdf21d29b6e069e54bc685627e0fe77a1bfe376f4a02ecb95135461",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90008-03-013@116",
+      "file": "90008-03-013.png",
+      "source_pdf": "900080A18.pdf",
+      "page": 2,
+      "clip": [
+        105.0,
+        627.61,
+        553.32,
+        795.92
+      ],
+      "image_width": 897,
+      "image_height": 337,
+      "sha256": "e39f75ada54bb14da7bfdbd020fd8c59cf170d9787dc9e5c5d9c8a8b610bf56e",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90009-04-002@116",
+      "file": "90009-04-002.png",
+      "source_pdf": "900090A14.pdf",
+      "page": 2,
+      "clip": [
+        105.0,
+        127.85,
+        553.32,
+        224.05
+      ],
+      "image_width": 897,
+      "image_height": 194,
+      "sha256": "fe16147b09d9ce5314d15201cc95b933eb6a517c62410112190221ad7a27b4aa",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90009-04-069@116",
+      "file": "90009-04-069.png",
+      "source_pdf": "900090A14.pdf",
+      "page": 7,
+      "clip": [
+        105.0,
+        139.01,
+        553.32,
+        273.88
+      ],
+      "image_width": 897,
+      "image_height": 270,
+      "sha256": "61c54cb4d3f187f8d7852e31c304d059288acf5195ad254f246d6af92e55a05f",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90009-04-086@116",
+      "file": "90009-04-086.png",
+      "source_pdf": "900090A14.pdf",
+      "page": 8,
+      "clip": [
+        105.0,
+        534.1,
+        553.32,
+        631.41
+      ],
+      "image_width": 897,
+      "image_height": 195,
+      "sha256": "a1d96ef873b62a00b9d6956ad5002e4356adf3a4b98471da92bf424660d1c06d",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-001@116",
+      "file": "90011-04-001.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 5,
+      "clip": [
+        105.0,
+        640.45,
+        553.32,
+        795.92
+      ],
+      "image_width": 897,
+      "image_height": 312,
+      "sha256": "7170d52805d9e929baa23549a4c8702685cf54017ae3ee87547462fc2095fcc4",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-002@116",
+      "file": "90011-04-002.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 6,
+      "clip": [
+        105.0,
+        43.35,
+        553.32,
+        172.09
+      ],
+      "image_width": 897,
+      "image_height": 259,
+      "sha256": "a32e1e0b29856b74e05799c540f33f4f553c913d6b240e1670cc60430f879497",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-003@116",
+      "file": "90011-04-003.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 6,
+      "clip": [
+        105.0,
+        173.09,
+        553.32,
+        309.28
+      ],
+      "image_width": 897,
+      "image_height": 273,
+      "sha256": "b5104cfc0ed2d13f9a6dd854f1a0a47862a7993c29bbbe6573ef386d3f539ced",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-004@116",
+      "file": "90011-04-004.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 6,
+      "clip": [
+        105.0,
+        310.28,
+        553.32,
+        610.65
+      ],
+      "image_width": 897,
+      "image_height": 602,
+      "sha256": "e042beb4392a5ef365ae73bab6f0fd776ba6e28018a4a0b6ba5b3c76ada75c44",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-005@116",
+      "file": "90011-04-005.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 6,
+      "clip": [
+        105.0,
+        611.65,
+        553.32,
+        795.92
+      ],
+      "image_width": 897,
+      "image_height": 369,
+      "sha256": "8de16fe818e94c5895050f4b88c3d7940015dc218631d3d7a664471c7bd8f4d6",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-009@116",
+      "file": "90011-04-009.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 7,
+      "clip": [
+        105.0,
+        178.01,
+        553.32,
+        261.64
+      ],
+      "image_width": 897,
+      "image_height": 168,
+      "sha256": "c9e731d15c2eb22996386ce65c76db1465920b6ac0f995f34dba5ad8302d6c74",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-013@116",
+      "file": "90011-04-013.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 7,
+      "clip": [
+        105.0,
+        379.4,
+        553.32,
+        493.26
+      ],
+      "image_width": 897,
+      "image_height": 229,
+      "sha256": "65f47449516bc1e671194f6c32e09efaa86c113aaaa3368b0af4275273b22033",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-014@116",
+      "file": "90011-04-014.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 7,
+      "clip": [
+        105.0,
+        494.26,
+        553.32,
+        609.45
+      ],
+      "image_width": 897,
+      "image_height": 231,
+      "sha256": "e582d2d61df23675d3b7f02a0edc831f47a67a2376d1e4929f020ce64eb1bf00",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-015@116",
+      "file": "90011-04-015.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 7,
+      "clip": [
+        105.0,
+        610.45,
+        553.32,
+        649.29
+      ],
+      "image_width": 897,
+      "image_height": 79,
+      "sha256": "15c7bdcc062fd0b25aa2cc540793505c7d2e73181aeaa35ed89cf175f996f6e2",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-016@116",
+      "file": "90011-04-016.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 7,
+      "clip": [
+        105.0,
+        650.29,
+        553.32,
+        701.01
+      ],
+      "image_width": 897,
+      "image_height": 103,
+      "sha256": "b5f9d640eeb5d1c04d5688213f1f1691f7519fc568792019dfaffd27139a71ad",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-017@116",
+      "file": "90011-04-017.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 7,
+      "clip": [
+        105.0,
+        702.01,
+        553.32,
+        795.92
+      ],
+      "image_width": 897,
+      "image_height": 188,
+      "sha256": "1c90f3fbbbc8694457efba97b5069f6772366e91a1626503a60be3efcfd792d4",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-018@116",
+      "file": "90011-04-018.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 8,
+      "clip": [
+        105.0,
+        43.35,
+        553.32,
+        122.65
+      ],
+      "image_width": 897,
+      "image_height": 160,
+      "sha256": "6175b1f628c228db6a6d9aa0034f956b82ba3a009c4231d2420bb0d55f602b1e",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-019@116",
+      "file": "90011-04-019.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 8,
+      "clip": [
+        105.0,
+        123.65,
+        553.32,
+        303.28
+      ],
+      "image_width": 897,
+      "image_height": 360,
+      "sha256": "ea1dbdb8e62f5f56d4c3afebaf60b667cdc0205ab1e707eef731f68795ae59ce",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    },
+    {
+      "id": "90011-04-020@116",
+      "file": "90011-04-020.png",
+      "source_pdf": "900110A13.pdf",
+      "page": 8,
+      "clip": [
+        105.0,
+        304.28,
+        553.32,
+        569.22
+      ],
+      "image_width": 897,
+      "image_height": 531,
+      "sha256": "70ca05106d6662661e6c0438078f09eb780295146b4bc54b6eebf6f5cb05308c",
+      "question_location_verified": true,
+      "answers_excluded_by_margin": true
+    }
+  ]
+}
