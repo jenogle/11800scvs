@@ -1,0 +1,293 @@
+{
+  "title": "116 年乙級缺圖題來源索引",
+  "notes": "source_page_hint comes from the imported PDF parser. Verify against actual PDF pages before displaying. Do not activate without image visual QA.",
+  "figure_count": 26,
+  "figures": [
+    {
+      "id": "11800-01-131@116",
+      "section": "11800-01",
+      "number": 131,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 12,
+      "question": "針對如下之實體關聯圖（Entity-Relationship Diagram）所規劃之資料庫，下列敘述何者不正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "11800-02-076@116",
+      "section": "11800-02",
+      "number": 76,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 34,
+      "question": "在 Microsoft Word 環境中，繪製「垂直文字方塊」並輸入 12pt 中文字 3個，製作如下圖的文字方塊，下列何者正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "11800-02-092@116",
+      "section": "11800-02",
+      "number": 92,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 36,
+      "question": "在 Microsoft Excel 環境中，有資料如下圖所示，其中儲存格 A1 及 A2的格式設定為數值、儲存格 A3 的格式設定為貨幣，由於格式設定不同，造成 3 個儲存格的數字資料右側沒對齊；如何修改 A3 的格式設定才能對齊？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "11800-02-093@116",
+      "section": "11800-02",
+      "number": 93,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 36,
+      "question": "在 Microsoft Excel 環境中，已有學員成績資料如下圖所示，如果希望當學員「平均」小於 60，則該學員整列的圖樣變成灰 -25%；則儲存格範圍A2 至 E5 之「設定格式化的條件」功能中，「條件一」的公式應為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "11800-02-096@116",
+      "section": "11800-02",
+      "number": 96,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 36,
+      "question": "在 Microsoft Excel 環境中，在下圖資料中，如果希望與「所得稅」有關的儲存格圖樣為灰-25％；則儲存格範圍 B2 至 E5 之「設定格式化的條件」功能中，「條件一」的公式應為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "11800-02-101@116",
+      "section": "11800-02",
+      "number": 101,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 37,
+      "question": "在 Microsoft Excel 環境中，有一工作表資料如下圖，在 B2 儲存格輸入公式「A2*C$2」，並設定格式為數值類別、小數位數為 0、使用千分位（,）符號，再拖曳 B2 儲存格之自動填滿控制點至 B4 儲存格，然後在B5 儲存格輸入=SUM（B2:B4），如此操作發生四捨五入之誤差問題，該如何解決？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "11800-02-116@116",
+      "section": "11800-02",
+      "number": 116,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 38,
+      "question": "在 Microsoft Access 查詢視窗中，有關 SQL 語法之敘述，下列何者錯誤？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "11800-04-071@116",
+      "section": "11800-04",
+      "number": 71,
+      "source_pdf": "118002A15.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/118002A15.pdf",
+      "source_page_hint": 63,
+      "question": "依據下圖所示之防火牆過濾規則，下列何者為正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90008-03-013@116",
+      "section": "90008-03",
+      "number": 13,
+      "source_pdf": "900080A18.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900080A18.pdf",
+      "source_page_hint": 2,
+      "question": "下列何者為環保標章？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90009-04-002@116",
+      "section": "90009-04",
+      "number": 2,
+      "source_pdf": "900090A14.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900090A14.pdf",
+      "source_page_hint": 2,
+      "question": "下列何者為節能標章？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90009-04-069@116",
+      "section": "90009-04",
+      "number": 69,
+      "source_pdf": "900090A14.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900090A14.pdf",
+      "source_page_hint": 7,
+      "question": "如下圖示為",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90009-04-086@116",
+      "section": "90009-04",
+      "number": 86,
+      "source_pdf": "900090A14.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900090A14.pdf",
+      "source_page_hint": 8,
+      "question": "如下圖，這是什麼標章？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-001@116",
+      "section": "90011-04",
+      "number": 1,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 5,
+      "question": "下列流程圖所對應的 C/C++程式之指令為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-002@116",
+      "section": "90011-04",
+      "number": 2,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 6,
+      "question": "下列流程圖所對應的 Python 指令為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-003@116",
+      "section": "90011-04",
+      "number": 3,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 6,
+      "question": "下列流程圖所對應的 Python 指令為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-004@116",
+      "section": "90011-04",
+      "number": 4,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 6,
+      "question": "下列流程圖所對應的 C/C++程式為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-005@116",
+      "section": "90011-04",
+      "number": 5,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 6,
+      "question": "下列 C/C++程式片段之敘述，何者正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-009@116",
+      "section": "90011-04",
+      "number": 9,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 7,
+      "question": "下列 C/C++程式片段，下列敘述何者正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-013@116",
+      "section": "90011-04",
+      "number": 13,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 7,
+      "question": "下列 C/C++程式片段，輸出結果何者正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-014@116",
+      "section": "90011-04",
+      "number": 14,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 7,
+      "question": "下列 Python 程式之片段，其輸出結果為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-015@116",
+      "section": "90011-04",
+      "number": 15,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 7,
+      "question": "下列 C/C++程式片段，若 x=2，則 y 值為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-016@116",
+      "section": "90011-04",
+      "number": 16,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 7,
+      "question": "下列 C/C++程式片段，其 x 之輸出結果何者正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-017@116",
+      "section": "90011-04",
+      "number": 17,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 7,
+      "question": "下列 C/C++程式片段，執行後 x 值為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-018@116",
+      "section": "90011-04",
+      "number": 18,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 8,
+      "question": "下列 C/C++程式片段，f(8, 3)輸出為何？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-019@116",
+      "section": "90011-04",
+      "number": 19,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 8,
+      "question": "下列 C/C++程式，何者敘述正確？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    },
+    {
+      "id": "90011-04-020@116",
+      "section": "90011-04",
+      "number": 20,
+      "source_pdf": "900110A13.pdf",
+      "source_pdf_url": "https://owinform.wdasec.gov.tw/owInform/DLowFile/900110A13.pdf",
+      "source_page_hint": 8,
+      "question": "下列 C/C++程式片段，何者敘述錯誤？",
+      "status": "needs_source_figure_extraction",
+      "verified": false
+    }
+  ]
+}
