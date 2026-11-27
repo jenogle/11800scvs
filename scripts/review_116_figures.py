@@ -69,7 +69,18 @@ def crop(doc: fitz.Document, row: dict) -> dict:
     if clip.height < 25:
         raise RuntimeError(f"Invalid clip {row['id']}")
     name = row["id"].split("@", 1)[0] + ".png"
-    pix = page.get_pixmap(matrix=fitz.Matrix(2.0, 2.0), clip=clip, alpha=False)
+    # These two graphics are printed on the following PDF page (question spans a page break).
+    # Crop the source graphic itself, not the incomplete text at the bottom of the first page.
+    cross_page = {
+        "11800-02-096@116": (36, (125, 56, 414, 177)),
+        "11800-02-116@116": (38, (125, 39, 548, 140)),
+    }
+    if row["id"] in cross_page:
+        next_page_index, bounds = cross_page[row["id"]]
+        page = doc[next_page_index]
+        clip = fitz.Rect(bounds)
+        page_idx = next_page_index
+    pix = page.get_pixmap(matrix=fitz.Matrix(2.5, 2.5) if row["id"] in cross_page else fitz.Matrix(2.0, 2.0), clip=clip, alpha=False)
     pix.save(str(OUT / name))
     return {"id":row["id"],"file":name,"source_pdf":row["source_pdf"],"page":page_idx+1,
             "clip": [round(v,2) for v in clip],"image_width":pix.width,"image_height":pix.height,
