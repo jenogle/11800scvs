@@ -204,7 +204,7 @@ function renderRoomCards(){
   const status=e.is_open?'開放中':'未開放';
   const date=e.created_at?new Date(e.created_at).toLocaleString('zh-TW'):'—';
   return '<article class="room-card'+(e.is_open?' room-open':'')+'" data-room="'+esc(e.exam_id)+'">'+
-    '<div class="room-card-head"><div><h3>'+esc(e.title)+'</h3><div class="sub">建立於 '+esc(date)+' · '+esc(e.question_count)+' 題</div></div>'+
+    '<div class="room-card-head"><div><h3>'+esc(e.title)+'</h3><div class="sub">建立於 '+esc(date)+' · '+esc(e.question_count)+' 題 · '+(e.question_bank_release==='116'?'116 年新版題庫':'歷史題庫')+'</div></div>'+
     '<span class="room-status'+(e.is_open?' is-open':'')+'">'+status+'</span></div>'+
     '<div class="room-metrics"><span>總分 <b>'+(e.has_mixed_draw?'依實際題型':(e.total_score??e.question_count))+'</b></span><span>參與紀錄 <b>'+Number(e.attempt_count||0)+'</b></span><span>已交卷 <b>'+Number(e.submitted_count||0)+'</b></span></div>'+
     '<div class="toolbar room-actions">'+
