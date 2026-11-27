@@ -204,3 +204,14 @@ body:has(#standardPlan) #legacyCustom{border:1px solid #d8e2f2;border-radius:14p
 body:has(#standardPlan) #legacyCustom summary{cursor:pointer;font-weight:750;color:#3557a5}
 body:has(#standardPlan) #customPlan>p.sub{margin:16px 0}
 @media(max-width:800px){body:has(#standardPlan) .official-fixed-row,body:has(#standardPlan) .official-fixed-total{align-items:flex-start;flex-direction:column;gap:6px}body:has(#standardPlan) .official-fixed-row>b{text-align:left}}
+
+/* Original 116-year PDF figure assets — readable on phones and tablets */
+body.student-ui .question-figure{margin:18px 0 20px;padding:14px;background:#f9fbff;border:1px solid #8b9fc5;border-radius:15px;overflow:hidden;color:#25324e}
+body.student-ui .question-figure img{display:block;max-width:100%;width:auto;height:auto;max-height:670px;object-fit:contain;margin:0 auto;border-radius:5px}
+body.student-ui .question-figure figcaption{color:#4b5b7b;font-size:12px;margin-top:9px;text-align:center}
+body.student-ui .figure-error-message{display:none}
+body.student-ui .question-figure.figure-error{background:#fff2f2;border:2px solid #e36e6e}
+body.student-ui .question-figure.figure-error img{display:none}
+body.student-ui .question-figure.figure-error .figure-error-message{display:block;color:#8b1c28;font-size:15px;font-weight:750;padding:15px;text-align:center}
+body.student-ui #reviewBox .review-figure{margin:15px 0 18px}
+@media(max-width:650px){body.student-ui .question-figure{padding:10px;margin:16px 0}body.student-ui .question-figure img{max-height:580px}body.student-ui .question-figure figcaption{font-size:12px}}
