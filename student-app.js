@@ -58,7 +58,7 @@ function roomMarkup(room){
  return '<button type="button" class="student-room-card'+(chosenRoomId===room.id?' selected':'')+'" data-room-id="'+safe(room.id)+'" aria-pressed="'+(chosenRoomId===room.id)+'">'+
  '<div class="room-topline"><span class="room-live"><i></i> OPEN NOW</span><span class="room-arrow">↗</span></div>'+
  '<h3>'+safe(room.title)+'</h3>'+
- '<div class="room-details"><span>◈ '+Number(room.question_count)+' 題</span><span>◉ '+(room.prevent_leave?'防切換':'一般考試')+'</span><span>⌑ '+(room.gate_required?'考場密碼':'免密碼')+'</span></div>'+
+ '<div class="room-details"><span>◈ '+Number(room.question_count)+' 題</span><span>◷ '+(room.question_bank_release==='116'?'116 年新版題庫':'歷史題庫')+'</span><span>◉ '+(room.prevent_leave?'防切換':'一般考試')+'</span><span>⌑ '+(room.gate_required?'考場密碼':'免密碼')+'</span></div>'+
  '<div class="room-enter">選擇此考場 <span>→</span></div></button>';
 }
 function chooseRoom(id){
