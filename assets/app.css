@@ -317,3 +317,10 @@ html,body,body.student-ui,body *,body.student-ui *,
 input,textarea,button,select,option{font-family:"Noto Sans TC",sans-serif}
 body.student-ui .student-reading-control{margin-left:auto}
 @media(max-width:650px){body:has(#roomManager) #authStatus{margin-top:0}}
+
+/* Teacher login: separate grid and actions. Fixed natural height, no grid stretching. */
+body:has(#roomManager) .teacher-auth-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;column-gap:18px;row-gap:12px}
+body:has(#roomManager) .teacher-auth-layout > *{min-width:0}
+body:has(#roomManager) .teacher-auth-layout #authStatus{display:block;align-self:start;margin:0;padding:12px 16px;min-height:0;height:auto;line-height:1.55;white-space:normal}
+body:has(#roomManager) .teacher-auth-actions{margin-top:16px}
+@media(max-width:800px){body:has(#roomManager) .teacher-auth-layout{grid-template-columns:1fr}body:has(#roomManager) .teacher-auth-actions{margin-top:12px}}
