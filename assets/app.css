@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=Noto+Serif+TC:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap');
 :root{--bg:#f6f8fc;--card:#fff;--line:#e5e7eb;--text:#172033;--muted:#667085;--blue:#2563eb;--blue2:#1d4ed8;--red:#b42318}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:var(--bg);color:var(--text)}
 header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.wrap{max-width:1120px;margin:auto;padding:18px 20px}.main{max-width:1120px;margin:22px auto;padding:0 20px}
@@ -311,27 +311,9 @@ body:has(#roomManager) section.card:has(#authStatus) .grid2{align-items:start}
 body:has(#roomManager) #authStatus{align-self:start;justify-self:stretch;margin-top:0;min-height:0;height:auto;padding:12px 14px;line-height:1.55;overflow-wrap:break-word}
 body:has(#roomManager) section.card:has(#authStatus) .toolbar{align-self:start}
 
-/* Reading fonts: all loaded from Google Fonts when connectivity allows;
-   each has an installed-font fallback for offline school environments. */
-
-:root{--reading-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
-:root[data-reading-font="sans"]{--reading-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
-:root[data-reading-font="serif"]{--reading-family:"Noto Serif TC","PMingLiU","Songti TC",serif}
-:root[data-reading-font="wenkai"]{--reading-family:"LXGW WenKai TC","DFKai-SB","BiauKai",serif}
-:root[data-reading-font="system"]{--reading-family:system-ui,-apple-system,"Microsoft JhengHei","PingFang TC",sans-serif}
-body,body.student-ui,.card,.question,.option,.review-option,input,textarea,button,select{font-family:var(--reading-family)}
-.reading-font-control{display:flex;gap:8px;align-items:center;justify-content:flex-end;min-width:0}
-.reading-font-control label{font-size:13px;font-weight:750;white-space:nowrap}
-.reading-font-control select{width:auto;max-width:250px;min-width:0;min-height:40px;padding:8px 10px;font-size:14px}
-body.student-ui .reading-font-control{margin-left:auto}
-body.student-ui .reading-font-control label{color:#dbe7ff}
-body.student-ui .reading-font-control select{background:#16233d;color:#f5f6ff;border:1px solid #55698d}
-body:has(#roomManager) .reading-font-control{margin:0 0 16px auto}
-body:has(#roomManager) .reading-font-control select{border-color:#b7c9e5;background:#fff;color:#243757}
-body.student-ui .student-reading-control{margin-left:0}
-@media(max-width:650px){
- body.student-ui .reading-font-control{flex:1 1 auto;width:100%;justify-content:flex-end}
- body.student-ui .reading-font-control select{max-width:min(66vw,260px)}
- body:has(#roomManager) .reading-font-control{justify-content:flex-end;max-width:100%;margin-bottom:8px}
- body:has(#roomManager) #authStatus{margin-top:0}
-}
+/* Site-wide font family: Noto Sans TC only. Keep font size controls. */
+:root{--reading-family:"Noto Sans TC",sans-serif}
+html,body,body.student-ui,body *,body.student-ui *,
+input,textarea,button,select,option{font-family:"Noto Sans TC",sans-serif}
+body.student-ui .student-reading-control{margin-left:auto}
+@media(max-width:650px){body:has(#roomManager) #authStatus{margin-top:0}}
