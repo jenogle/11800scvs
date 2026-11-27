@@ -318,13 +318,43 @@ input,textarea,button,select,option{font-family:"Noto Sans TC",sans-serif}
 body.student-ui .student-reading-control{margin-left:auto}
 @media(max-width:650px){body:has(#roomManager) #authStatus{margin-top:0}}
 
-/* Teacher login: separate grid and actions. Fixed natural height, no grid stretching. */
-body:has(#roomManager) .teacher-auth-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;column-gap:18px;row-gap:12px}
-body:has(#roomManager) .teacher-auth-layout > *{min-width:0}
-body:has(#roomManager) .teacher-auth-layout #authStatus{display:block;align-self:start;margin:0;padding:12px 16px;min-height:0;height:auto;line-height:1.55;white-space:normal}
-body:has(#roomManager) .teacher-auth-actions{margin-top:16px}
-@media(max-width:800px){body:has(#roomManager) .teacher-auth-layout{grid-template-columns:1fr}body:has(#roomManager) .teacher-auth-actions{margin-top:12px}}
-
+/* Unified teacher login: a single coherent box with stacked fields, feedback and actions. */
+body:has(#roomManager) .teacher-auth-panel{
+ display:flex;
+ flex-direction:column;
+ gap:14px;
+ width:100%;
+ max-width:680px;
+ padding:22px 24px;
+ background:#f8faff;
+ border:1px solid #d6e2f6;
+ border-radius:16px;
+}
+body:has(#roomManager) .teacher-auth-panel>.field{min-width:0;margin:0}
+body:has(#roomManager) .teacher-auth-panel .field input{width:100%;max-width:100%}
+body:has(#roomManager) .teacher-auth-panel #authStatus{
+ display:block;
+ align-self:stretch;
+ width:100%;
+ margin:0;
+ padding:11px 13px;
+ height:auto;
+ min-height:0;
+ line-height:1.55;
+ border-radius:10px;
+ box-sizing:border-box;
+}
+body:has(#roomManager) .teacher-auth-panel .teacher-auth-actions{
+ display:flex;
+ align-items:center;
+ justify-content:flex-start;
+ gap:10px;
+ flex-wrap:wrap;
+ margin:0;
+}
+@media(max-width:800px){
+ body:has(#roomManager) .teacher-auth-panel{max-width:100%;padding:17px 16px}
+}
 /* Global dashboard message layout: content-height alerts, never grid-stretched. */
 body:has(#roomManager) .grid > .msg,
 body:has(#roomManager) .grid2 > .msg,
