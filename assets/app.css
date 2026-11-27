@@ -324,3 +324,20 @@ body:has(#roomManager) .teacher-auth-layout > *{min-width:0}
 body:has(#roomManager) .teacher-auth-layout #authStatus{display:block;align-self:start;margin:0;padding:12px 16px;min-height:0;height:auto;line-height:1.55;white-space:normal}
 body:has(#roomManager) .teacher-auth-actions{margin-top:16px}
 @media(max-width:800px){body:has(#roomManager) .teacher-auth-layout{grid-template-columns:1fr}body:has(#roomManager) .teacher-auth-actions{margin-top:12px}}
+
+/* Global dashboard message layout: content-height alerts, never grid-stretched. */
+body:has(#roomManager) .grid > .msg,
+body:has(#roomManager) .grid2 > .msg,
+body:has(#roomManager) .teacher-auth-layout > .msg{
+ align-self:start;
+ justify-self:stretch;
+ margin-top:0;
+ height:auto;
+ min-height:0;
+}
+body:has(#roomManager) #policyPreview,
+body:has(#roomManager) #authStatus,
+body:has(#roomManager) #gatePreview{
+ height:max-content;
+ max-height:none;
+}
