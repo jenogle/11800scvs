@@ -2,6 +2,8 @@
 (function(){
   'use strict';
   const key='11800scvs:reading-size:v1';
+  const fontKey='11800scvs:reading-font:v1';
+  const fonts=new Set(['sans','serif','wenkai','system']);
   const sizes=new Set(['small','normal','large','extra']);
   function apply(value){
     const choice=sizes.has(value)?value:'normal';
@@ -19,6 +21,24 @@
       select.addEventListener('change',()=>apply(select.value));
     }
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});
-  else bind();
+  let font='sans';
+  try{font=localStorage.getItem(fontKey)||'sans'}catch(err){}
+  if(!fonts.has(font))font='sans';
+  document.documentElement.dataset.readingFont=font;
+  function applyFont(value){
+    const choice=fonts.has(value)?value:'sans';
+    document.documentElement.dataset.readingFont=choice;
+    for(const select of document.querySelectorAll('[data-reading-font]'))select.value=choice;
+    try{localStorage.setItem(fontKey,choice)}catch(err){}
+  }
+  const oldBind=bind;
+  function bindAll(){
+    oldBind();
+    for(const select of document.querySelectorAll('[data-reading-font]')){
+      select.value=document.documentElement.dataset.readingFont;
+      select.addEventListener('change',()=>applyFont(select.value));
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindAll,{once:true});
+  else bindAll();
 })();
