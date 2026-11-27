@@ -73,16 +73,16 @@
       "id": "11800-02-096@116",
       "file": "11800-02-096.png",
       "source_pdf": "118002A15.pdf",
-      "page": 36,
+      "page": 37,
       "clip": [
-        105.0,
-        626.05,
-        553.32,
-        795.92
+        125.0,
+        56.0,
+        414.0,
+        177.0
       ],
-      "image_width": 897,
-      "image_height": 340,
-      "sha256": "cb87eca0a3e131bd3a9d9e7e917cac45183ad76261d8ad5c692bfc1d0789cea0",
+      "image_width": 723,
+      "image_height": 303,
+      "sha256": "43c215f3089e7e6f59d50af0a1f024d88085b7483dc711884c8a444236c68348",
       "question_location_verified": true,
       "answers_excluded_by_margin": true
     },
@@ -107,16 +107,16 @@
       "id": "11800-02-116@116",
       "file": "11800-02-116.png",
       "source_pdf": "118002A15.pdf",
-      "page": 38,
+      "page": 39,
       "clip": [
-        105.0,
-        689.77,
-        553.32,
-        795.92
+        125.0,
+        39.0,
+        548.0,
+        140.0
       ],
-      "image_width": 897,
-      "image_height": 213,
-      "sha256": "637bebbdda4b8cfa2959a04f3487df827294dc5a43b48d6382a01b454dc8a133",
+      "image_width": 1058,
+      "image_height": 253,
+      "sha256": "f896c574c71c62e98f82658e54e19e1496c737d18841f04d419d35f639a9636b",
       "question_location_verified": true,
       "answers_excluded_by_margin": true
     },
